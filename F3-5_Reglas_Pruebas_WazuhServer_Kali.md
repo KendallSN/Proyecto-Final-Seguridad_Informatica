@@ -90,7 +90,8 @@ sudo useradd -m testfim
 sudo userdel -r testfim
 ```
 Esperado: alertas **100002** (nivel 12) en segundos.
-
+![alt text]({3932CEE4-E2F4-4997-871C-81C3CB78DCA3}.png)
+![alt text]({E74303D4-9EB8-4350-B8AC-4977352BF585}.png)
 ### 3 Regla 3 — sudo por usuario no privilegiado (en linux-server)
 ```bash
 sudo useradd -m pepe && sudo passwd pepe
@@ -100,7 +101,8 @@ exit
 sudo userdel -r pepe
 ```
 Esperado: alerta **100003**.
-
+![alt text]({3A031C70-EA2F-4EDE-9645-ABE8A674D6EA}.png)
+![alt text]({D5BB303E-763C-471F-A3EB-FF5644E2FA20}.png)
 ### 4 Regla 4 — Puerto 4444 (en linux-server y desde Kali)
 ```bash
 # linux-server (opcional, para que haya algo escuchando):
@@ -112,14 +114,15 @@ nmap -p 4444 192.168.100.20
 ```
 Verifica en linux-server que el log existe: `sudo grep WAZUH_4444 /var/log/kern.log | tail`.
 Esperado: alerta **100004** (nivel 12).
-
+![alt text]({4310BE39-5B14-405E-84B2-D860476DEA62}.png)
+![alt text]({0847EC7B-DC20-419F-B337-E6BA926F5F4D}.png)
 ### 5 Regla 5 — Cuenta creada fuera de horario (en agent-windows, PowerShell admin)
 ```powershell
 net user testoff P@ssw0rd123! /add
 net user testoff /delete
 ```
-- **Hoy es sábado** → dispara **100015** (fin de semana) directamente.
-- Para probar **100005** en día hábil: edita temporalmente `<time>` en el manager a un rango que incluya la hora actual (por ejemplo `<time>12:00 am - 11:59 pm</time>`), reinicia el manager, haz la prueba y **vuelve a dejar `6:00 pm - 7:00 am`**.
+![alt text]({70E47097-52A1-4D4C-8E77-52344D2C219D}.png)
+![alt text]({A0E8A3ED-E028-40B4-85D3-D3F2BE0A83BA}.png)
 
 ### 6 FIM de `/bin`, `/usr/bin`, `/var/www` y System32
 ```bash

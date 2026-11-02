@@ -48,6 +48,9 @@ Esperado: alerta **100001** (nivel 10). Funciona igual contra `agent-db` (192.16
      Debe aparecer `DROP all -- <IP_KALI> 0.0.0.0/0`.
    - Desde Kali, el ataque se queda sin respuesta (timeouts).
    - A los 10 minutos: línea `... delete ...` en el log y la regla desaparece.
+
+   ![alt text]({D307F27E-E52D-4591-9480-A97C9541BB38}-1.png)
+   
 4. **Desbloquear antes de tiempo** (si necesitas repetir el ataque):
 ```bash
    iptables -L INPUT -n --line-numbers          # busca el número de la línea DROP

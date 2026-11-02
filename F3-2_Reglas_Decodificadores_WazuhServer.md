@@ -70,7 +70,7 @@ sudo nano /var/ossec/etc/rules/local_rules.xml
 
   <!-- REGLA 1: Fuerza bruta SSH: 6 fallos (más de 5) en 60 s desde la misma IP -->
   <rule id="100001" level="10" frequency="6" timeframe="60">
-    <if_matched_sid>5760</if_matched_sid>
+    <if_matched_sid>5760,2502,5557,5503,5551</if_matched_sid>
     <same_source_ip />
     <description>SSH: fuerza bruta - más de 5 intentos fallidos en 60s desde $(srcip)</description>
     <mitre>
