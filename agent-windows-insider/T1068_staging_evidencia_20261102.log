@@ -1,0 +1,30 @@
+=== T1068 BYOVD - staging unicamente (sin sc.exe start) ===
+Driver ya en cache: C:\AtomicRedTeam\ExternalPayloads\iqvw64e.sys
+Registrando servicio de kernel (sc.exe create, sin start)...
+[SC] CreateService SUCCESS
+
+SERVICE_NAME: iqvw64e.sys 
+        TYPE               : 1  KERNEL_DRIVER  
+        STATE              : 1  STOPPED 
+        WIN32_EXIT_CODE    : 1077  (0x435)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+Evento generado (Event ID 7045):
+
+
+TimeCreated : 11/2/2026 8:32:18 PM
+Id          : 7045
+Message     : A service was installed in the system.
+              
+              Service Name:  iqvw64e.sys
+              Service File Name:  C:\AtomicRedTeam\ExternalPayloads\iqvw64e.sys
+              Service Type:  kernel mode driver
+              Service Start Type:  demand start
+              Service Account:  
+
+
+
+Limpiando el registro del servicio (sc.exe delete)...
+[SC] DeleteService SUCCESS
+=== Fin de la parte segura. El driver queda en cache, el servicio NO queda registrado. ===
