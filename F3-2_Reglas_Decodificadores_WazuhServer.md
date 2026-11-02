@@ -1,0 +1,257 @@
+## En `wazuh-server`: decodificadores personalizados
+
+Archivo: `/var/ossec/etc/decoders/local_decoder.xml` → **agregar al final** (sin borrar lo que haya).
+
+```bash
+sudo nano /var/ossec/etc/decoders/local_decoder.xml
+```
+
+```xml
+<!-- ============================================================
+     DECODER 1: Apache access log (formato "wazuh", etiqueta WZ-APACHE)
+     Extrae: srcip, método (protocol), url, código HTTP (id), user_agent
+     ============================================================ -->
+<decoder name="wz-apache-access">
+  <prematch>^WZ-APACHE </prematch>
+</decoder>
+
+<decoder name="wz-apache-access-fields">
+  <parent>wz-apache-access</parent>
+  <regex type="pcre2">^WZ-APACHE (\S+) \S+ \S+ \[[^\]]+\] "(\w+) (\S+) [^"]*" (\d{3}) \S+ "[^"]*" "([^"]*)"</regex>
+  <order>srcip,protocol,url,id,user_agent</order>
+</decoder>
+
+<!-- ============================================================
+     DECODER 2: PostgreSQL (log_line_prefix = 'WZ-PG %m [%p] %q%u@%d %h ')
+     Extrae: pid, srcuser, db, srcip, pg_level, pg_message
+     ============================================================ -->
+<decoder name="wz-postgresql">
+  <prematch>^WZ-PG </prematch>
+</decoder>
+
+<decoder name="wz-postgresql-fields">
+  <parent>wz-postgresql</parent>
+  <regex type="pcre2">^WZ-PG \S+ \S+ \S+ \[(\d+)\] (\S*)@(\S*) (\S*) (\w+):\s+(.*)$</regex>
+  <order>pid,srcuser,db,srcip,pg_level,pg_message</order>
+</decoder>
+
+<!-- ============================================================
+     DECODER 3: Firewall iptables - conexiones al puerto 4444
+     Extrae: srcip, dstip, protocol, srcport, dstport
+     ============================================================ -->
+<decoder name="wz-fw-port4444">
+  <prematch>WAZUH_4444_</prematch>
+</decoder>
+
+<decoder name="wz-fw-port4444-fields">
+  <parent>wz-fw-port4444</parent>
+  <regex type="pcre2">SRC=(\S+) DST=(\S+) .*PROTO=(\S+) SPT=(\d+) DPT=(\d+)</regex>
+  <order>srcip,dstip,protocol,srcport,dstport</order>
+</decoder>
+```
+
+## 3. En `wazuh-server`: reglas personalizadas
+
+Archivo: `/var/ossec/etc/rules/local_rules.xml`
+
+> ⚠️ El archivo trae por defecto un grupo de ejemplo con las reglas **100001 y 100002**. **Bórralo (o reemplaza todo el archivo)**, si no obtendrás error de ID duplicado.
+
+```bash
+sudo cp /var/ossec/etc/rules/local_rules.xml /var/ossec/etc/rules/local_rules.xml.bak
+sudo nano /var/ossec/etc/rules/local_rules.xml
+```
+
+```xml
+<!-- ============================================================
+  REGLAS REQUERIDAS (1 a 5) + variantes (10001X)
+  ============================================================ -->
+
+<group name="local,sshd,authentication_failures,">
+
+  <!-- REGLA 1: Fuerza bruta SSH: 6 fallos (más de 5) en 60 s desde la misma IP -->
+  <rule id="100001" level="10" frequency="6" timeframe="60">
+    <if_matched_sid>5760</if_matched_sid>
+    <same_source_ip />
+    <description>SSH: fuerza bruta - más de 5 intentos fallidos en 60s desde $(srcip)</description>
+    <mitre>
+      <id>T1110.001</id>
+    </mitre>
+    <group>authentication_failures,pci_dss_11.4,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+
+</group>
+
+<group name="local,syscheck,">
+
+  <!-- REGLA 2: Cambios en /etc/passwd, /etc/sudoers o /etc/sudoers.d (FIM)
+       550 = modificado, 553 = borrado, 554 = creado -->
+  <rule id="100002" level="12">
+    <if_sid>550,553,554</if_sid>
+    <field name="file" type="pcre2">^/etc/(passwd|sudoers(\.d/.+)?)$</field>
+    <description>FIM: modificación de archivo crítico de cuentas/privilegios: $(file)</description>
+    <mitre>
+      <id>T1098</id>
+      <id>T1548.003</id>
+    </mitre>
+    <group>syscheck,pci_dss_11.5,pci_dss_10.2.4,</group>
+  </rule>
+
+</group>
+
+<group name="local,sudo,">
+
+  <!-- REGLA 3: Usuario SIN permisos intenta usar sudo
+       5405 = "user NOT in sudoers" (regla integrada) -->
+  <rule id="100003" level="10">
+    <if_sid>5405</if_sid>
+    <description>sudo: usuario NO privilegiado intentó ejecutar comandos con sudo ($(srcuser))</description>
+    <mitre>
+      <id>T1548.003</id>
+    </mitre>
+    <group>pci_dss_10.2.5,</group>
+  </rule>
+  
+</group>
+
+<group name="local,firewall,reverse_shell,">
+
+  <!-- REGLA 4: Conexión ENTRANTE al puerto 4444 -->
+  <rule id="100004" level="12">
+    <if_sid>4100</if_sid>
+    <match>WAZUH_4444_IN</match>
+    <field name="dstport">^4444$</field>
+    <description>Red: conexión entrante al puerto 4444 desde $(srcip) (posible reverse/bind shell Metasploit)</description>
+    <mitre>
+      <id>T1571</id>
+    </mitre>
+  </rule>
+
+  <!-- REGLA 4b: conexión SALIENTE al puerto 4444 -->
+  <rule id="100014" level="13">
+    <if_sid>4100</if_sid>
+    <match>WAZUH_4444_OUT</match>
+    <field name="dstport">^4444$</field>
+    <description>Red: conexión SALIENTE al puerto 4444 hacia $(dstip) (posible reverse shell)</description>
+    <mitre>
+      <id>T1571</id>
+    </mitre>
+  </rule>
+
+</group>
+
+<group name="local,windows,account_changes,">
+
+  <!-- REGLA 5: Cuenta creada en Windows (4720) fuera de horario laboral -->
+  <rule id="100005" level="12">
+    <if_sid>60109</if_sid>
+    <field name="win.system.eventID">^4720$</field>
+    <time>6:00 pm - 7:00 am</time>
+    <description>Windows: cuenta de usuario creada FUERA DE HORARIO laboral ($(win.eventdata.targetUserName))</description>
+    <mitre>
+      <id>T1136.001</id>
+      <id>T1136.002</id>
+    </mitre>
+    <group>pci_dss_8.1.2,pci_dss_10.2.5,gdpr_IV_32.2,hipaa_164.312.a.2.I,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AU.14,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+  <!-- REGLA 5b: cuenta creada en fin de semana -->
+  <rule id="100015" level="12">
+    <if_sid>60109</if_sid>
+    <field name="win.system.eventID">^4720$</field>
+    <weekday>weekends</weekday>
+    <description>Windows: cuenta de usuario creada en FIN DE SEMANA ($(win.eventdata.targetUserName))</description>
+    <mitre>
+      <id>T1136.001</id>
+      <id>T1136.002</id>
+    </mitre>
+    <group>pci_dss_8.1.2,pci_dss_10.2.5,gdpr_IV_32.2,hipaa_164.312.a.2.I,hipaa_164.312.b,nist_800_53_AC.2,nist_800_53_AU.14,tsc_CC6.1,tsc_CC6.8,tsc_CC7.2,tsc_CC7.3,</group>
+  </rule>
+
+</group>
+
+<!-- ============================================================
+  REGLAS QUE USAN LOS DECODERS DE APACHE Y POSTGRESQL
+  ============================================================ -->
+
+<group name="local,apache,web,">
+
+  <!-- Base: cualquier petición decodificada (nivel 0 = no genera alerta) -->
+  <rule id="100020" level="0">
+    <decoded_as>wz-apache-access</decoded_as>
+    <description>Apache (decoder personalizado): petición web</description>
+  </rule>
+
+  <!-- Inyección SQL en la URL (Corregida con la etiqueta estática nativa) -->
+  <rule id="100021" level="10">
+    <if_sid>100020</if_sid>
+    <url>%27|'|%22|union|select|information_schema|sleep|or</url>
+    <description>Apache: posible inyección SQL desde $(srcip) -> $(url)</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+    <group>attack,sql_injection,pci_dss_6.5.1,</group>
+  </rule>
+
+  <!-- Herramientas de escaneo por User-Agent -->
+  <rule id="100022" level="9">
+    <if_sid>100020</if_sid>
+    <field name="user_agent" type="pcre2">(?i)sqlmap|nikto|nmap|hydra|gobuster|dirbuster|wpscan</field>
+    <description>Apache: herramienta de ataque/escaneo detectada ($(user_agent)) desde $(srcip)</description>
+    <mitre>
+      <id>T1595</id>
+    </mitre>
+    <group>attack,web_scan,</group>
+  </rule>
+
+</group>
+
+<group name="local,postgresql,">
+
+  <!-- Fallo de autenticación en PostgreSQL -->
+  <rule id="100031" level="5">
+    <decoded_as>wz-postgresql</decoded_as>
+    <match>password authentication failed</match>
+    <description>PostgreSQL: fallo de autenticación del usuario $(srcuser) desde $(srcip)</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <group>authentication_failed,</group>
+  </rule>
+
+  <!-- Fuerza bruta contra PostgreSQL: 5 fallos en 60 s desde la misma IP -->
+  <rule id="100032" level="10" frequency="5" timeframe="60">
+    <if_matched_sid>100031</if_matched_sid>
+    <same_source_ip />
+    <description>PostgreSQL: fuerza bruta - múltiples fallos de login desde $(srcip)</description>
+    <mitre>
+      <id>T1110.001</id>
+    </mitre>
+    <group>authentication_failures,</group>
+  </rule>
+
+  <!-- Cambios de roles / DDL peligroso -->
+  <rule id="100033" level="8">
+    <decoded_as>wz-postgresql</decoded_as>
+    <regex type="pcre2">(?i)statement:\s+(DROP|ALTER ROLE|ALTER USER|CREATE ROLE|CREATE USER)</regex>
+    <description>PostgreSQL: sentencia DDL sensible (rol/DROP) ejecutada por $(srcuser)</description>
+    <mitre>
+      <id>T1098</id>
+    </mitre>
+  </rule>
+
+  <!-- Errores de sintaxis SQL -->
+  <rule id="100034" level="7">
+    <decoded_as>wz-postgresql</decoded_as>
+    <regex type="pcre2">ERROR:\s+syntax error</regex>
+    <description>PostgreSQL: error de sintaxis SQL (posible inyección SQL contra la base)</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+</group>
+```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start wazuh-manager
+```
