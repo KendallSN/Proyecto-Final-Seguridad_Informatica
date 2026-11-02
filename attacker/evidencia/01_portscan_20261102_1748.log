@@ -1,0 +1,33 @@
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-11-02 17:48 EST
+Nmap scan report for 192.168.100.40
+Host is up (0.026s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT     STATE SERVICE    VERSION
+22/tcp   open  ssh        OpenSSH 10.0p2 Debian 7+deb13u4 (protocol 2.0)
+5432/tcp open  postgresql PostgreSQL DB 9.6.0 or later
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port5432-TCP:V=7.94SVN%I=7%D=11/2%Time=6AE9135A%P=x86_64-pc-linux-gnu%r
+SF:(SMBProgNeg,90,"E\0\0\0\x8fSFATAL\0VFATAL\0C0A000\0Munsupported\x20fron
+SF:tend\x20protocol\x2065363\.19778:\x20server\x20supports\x203\.0\x20to\x
+SF:203\.0\0Fbackend_startup\.c\0L703\0RProcessStartupPacket\0\0");
+MAC Address: DA:D2:1C:B0:B3:08 (Unknown)
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).
+TCP/IP fingerprint:
+OS:SCAN(V=7.94SVN%E=4%D=11/2%OT=22%CT=1%CU=42789%PV=Y%DS=1%DC=D%G=Y%M=DAD21
+OS:C%TM=6AE91366%P=x86_64-pc-linux-gnu)SEQ(SP=F4%GCD=1%ISR=10D%TI=Z%CI=Z%II
+OS:=I%TS=21)SEQ(SP=F7%GCD=1%ISR=10D%TI=Z%CI=Z%II=I%TS=21)SEQ(SP=FC%GCD=1%IS
+OS:R=10C%TI=Z%CI=Z%II=I%TS=21)SEQ(SP=FF%GCD=1%ISR=10D%TI=Z%CI=Z%II=I%TS=21)
+OS:OPS(O1=MAC8ST11NW7%O2=MAC8ST11NW7%O3=MAC8NNT11NW7%O4=MAC8ST11NW7%O5=MAC8
+OS:ST11NW7%O6=MAC8ST11)WIN(W1=F6E4%W2=F6E4%W3=F6E4%W4=F6E4%W5=F6E4%W6=F6E4)
+OS:ECN(R=Y%DF=Y%T=40%W=F7F8%O=MAC8NNSNW7%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%
+OS:F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T
+OS:5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=
+OS:Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF
+OS:=N%T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40
+OS:%CD=S)
+
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 20.56 seconds

