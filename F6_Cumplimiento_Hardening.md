@@ -101,3 +101,5 @@ Repetir para los tres agentes. Guardar en `Wazuh-Reportes/` del repo (ya existe 
 ---
 
 *Nota: este documento se generó a partir de los CSV reales exportados del SCA (`Configuration-Assestments/`), no de datos de ejemplo. Los comandos de hardening de la sección 21 no se han aplicado todavía a ninguna máquina — quedan pendientes de ejecución y de nueva verificación con un segundo escaneo SCA para confirmar la mejora en el % de cumplimiento, idealmente documentando el antes/después en el reporte final.*
+
+**⚠️ Hallazgo confirmado (02/11/2026):** los 4 PDF que ya están en [`Wazuh-Reportes/`](Wazuh-Reportes/) (`wazuh-agent-configuration-00X-....pdf`) son exportaciones del panel **"Agent Configuration"** (la configuración del agente en sí: ossec.conf, módulos activos, etc.), **no** del panel de **Security Configuration Assessment**. El entregable F6 pide explícitamente el "reporte de cumplimiento exportado desde el dashboard" — el reporte SCA correcto todavía no se ha exportado ni una sola vez. Ver [`F6_Guia_Equipo.md`](F6_Guia_Equipo.md) para los pasos exactos de cómo exportarlo bien, diferenciado del panel equivocado.
