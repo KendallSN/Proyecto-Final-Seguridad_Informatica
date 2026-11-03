@@ -1,0 +1,67 @@
+<!-- Local Decoders -->
+
+<!-- Modify it at your will. -->
+<!-- Copyright (C) 2015, Wazuh Inc. -->
+
+<!--
+  - Allowed static fields:
+  - location   - where the log came from (only on FTS)
+  - srcuser    - extracts the source username
+  - dstuser    - extracts the destination (target) username
+  - user       - an alias to dstuser (only one of the two can be used)
+  - srcip      - source ip
+  - dstip      - dst ip
+  - srcport    - source port
+  - dstport    - destination port
+  - protocol   - protocol
+  - id         - event id
+  - url        - url of the event
+  - action     - event action (deny, drop, accept, etc)
+  - status     - event status (success, failure, etc)
+  - extra_data - Any extra data
+-->
+
+<decoder name="local_decoder_example">
+    <program_name>local_decoder_example</program_name>
+</decoder>
+<!-- ============================================================
+     DECODER 1: Apache access log (formato "wazuh", etiqueta WZ-APACHE)
+     Extrae: srcip, método (protocol), url, código HTTP (id), user_agent
+     ============================================================ -->
+<decoder name="wz-apache-access">
+  <prematch>^WZ-APACHE </prematch>
+</decoder>
+
+<decoder name="wz-apache-access-fields">
+  <parent>wz-apache-access</parent>
+  <regex type="pcre2">^WZ-APACHE (\S+) \S+ \S+ \[[^\]]+\] "(\w+) (\S+) [^"]*" (\d{3}) \S+ "[^"]*" "([^"]*)"</regex>
+  <order>srcip,protocol,url,id,user_agent</order>
+</decoder>
+
+<!-- ============================================================
+     DECODER 2: PostgreSQL (log_line_prefix = 'WZ-PG %m [%p] %q%u@%d %h ')
+     Extrae: pid, srcuser, db, srcip, pg_level, pg_message
+     ============================================================ -->
+<decoder name="wz-postgresql">
+  <prematch>^WZ-PG </prematch>
+</decoder>
+
+<decoder name="wz-postgresql-fields">
+  <parent>wz-postgresql</parent>
+  <regex type="pcre2">^WZ-PG \S+ \S+ \S+ \[(\d+)\] (\S*)@(\S*) (\S*) (\w+):\s+(.*)$</regex>
+  <order>pid,srcuser,db,srcip,pg_level,pg_message</order>
+</decoder>
+
+<!-- ============================================================
+     DECODER 3: Firewall iptables - conexiones al puerto 4444
+     Extrae: srcip, dstip, protocol, srcport, dstport
+     ============================================================ -->
+<decoder name="wz-fw-port4444">
+  <prematch>WAZUH_4444_</prematch>
+</decoder>
+
+<decoder name="wz-fw-port4444-fields">
+  <parent>wz-fw-port4444</parent>
+  <regex type="pcre2">SRC=(\S+) DST=(\S+) .*PROTO=(\S+) SPT=(\d+) DPT=(\d+)</regex>
+  <order>srcip,dstip,protocol,srcport,dstport</order>
+</decoder>
