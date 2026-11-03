@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Zonas">
+    <mxGraphModel dx="1300" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="El wazuh-server vigila tres zonas de servicios; el atacante llega a agent-linux (web) y a agent-db (SSH)" style="text;html=1;align=left;fontStyle=1;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="1100" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- top boxes -->
+        <mxCell id="admins" value="Administradores&#10;navegador, SSH, RDP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="260" y="60" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="internet" value="Internet&#10;VirusTotal y Slack" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="60" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- misp box (nuevo) -->
+        <mxCell id="misp" value="misp - 192.168.100.11&#10;Servidor MISP (Threat Intel)&#10;agente: misp-agent-linux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="200" width="300" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Monitoreo zone -->
+        <mxCell id="zoneMon" value="Monitoreo" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="300" width="1060" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="wazuh" value="wazuh-server . 10&#10;Manager + Indexer + Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="330" width="500" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Servicios zone -->
+        <mxCell id="zoneServ" value="Servicios" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="470" width="1060" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="win" value="agent-windows&#10;.30&#10;Active Directory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="180" y="510" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lin" value="agent-linux&#10;.20&#10;Apache + PHP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="500" y="510" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="agent-db&#10;.40&#10;PostgreSQL + SSH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="820" y="510" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Atacante zone -->
+        <mxCell id="zoneAtk" value="Atacante" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="700" width="1060" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="attacker" value="attacker&#10;.50 (asignada; .99 sugerida)&#10;Kali Linux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="740" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="eAdminsWazuh" value="dashboard 443/TCP" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="wazuh" target="admins"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eWazuhInternet" value="443/TCP" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="wazuh" target="internet"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eWazuhMisp" value="integracion custom-misp.py (443/TCP)" style="html=1;endArrow=block;startArrow=none;strokeColor=#9673A6;" edge="1" parent="1" source="wazuh" target="misp"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="eWinWazuh" value="agentes: 1514 y 1515/TCP" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="win" target="wazuh"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eLinWazuh" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="lin" target="wazuh"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eDbWazuh" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="db" target="wazuh"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="eMispWazuh" style="html=1;endArrow=block;startArrow=none;strokeColor=#9673A6;" edge="1" parent="1" source="misp" target="wazuh"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="eLinDb" value="5432/TCP (consulta app)" style="html=1;endArrow=block;startArrow=none;strokeColor=#999999;" edge="1" parent="1" source="lin" target="db"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- CORRECTED: attacker -> agent-linux (web/SQLi) -->
+        <mxCell id="eAtkLin" value="80/TCP (web, T1190 SQLi)" style="html=1;endArrow=block;startArrow=none;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="attacker" target="lin"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <!-- CORRECTED: attacker -> agent-db (SSH) -->
+        <mxCell id="eAtkDb" value="22/TCP (SSH, T1110.001 fuerza bruta)" style="html=1;endArrow=block;startArrow=none;strokeColor=#B85450;strokeWidth=2;" edge="1" parent="1" source="attacker" target="db"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="footer" value="zonas de red - monitoreo, servicios, amenazas e inteligencia, y atacante" style="text;html=1;align=left;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="140" y="870" width="700" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
