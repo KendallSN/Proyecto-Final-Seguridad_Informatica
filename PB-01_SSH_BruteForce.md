@@ -41,11 +41,11 @@
 ## 3. Detección y triage (0 a 5 min)
 
 1. Recibir la alerta en Slack o verla en el Dashboard: **Threat Hunting → Events**, filtro `rule.id:100001`.
-2. Registrar:
-   - IP origen (`data.srcip`)
-   - Agente atacado (`agent.name`)
-   - Usuario objetivo (`data.dstuser`)
-   - Hora de la alerta
+2. Identificar en la alerta los datos necesarios para el análisis y el registro posterior:
+   - La IP de origen (`data.srcip`)
+   - El agente atacado (`agent.name`)
+   - El usuario objetivo (`data.dstuser`)
+   - La hora de la alerta
 3. Confirmar que el bloqueo automático se aplicó (en el agente atacado):
    ```bash
    iptables -S INPUT | grep DROP
@@ -53,7 +53,7 @@
    ```
    ![alt text]({0837C7BF-38CB-4EDD-9D45-5974690E49BA}.png)
    ![alt text]({D307F27E-E52D-4591-9480-A97C9541BB38}.png)
-   Debe aparecer una regla `-A INPUT -s <IP_ATACANTE>/32 -j DROP`.
+   Debe aparecer una regla `-A INPUT -s <IP_ATACANTE>/32 -j DROP`. El marcador `<IP_ATACANTE>` representa la dirección obtenida de la alerta.
 4. Revisar si la IP está en MISP: buscar alerta `rule.id:100050` con la misma IP.
 
 ---
@@ -82,7 +82,7 @@ En el Dashboard: `data.srcip:<IP_ATACANTE> AND rule.groups:authentication_succes
    ```bash
    iptables -I INPUT -s <IP_ATACANTE> -j DROP
    ```
-3. Cerrar el caso con el registro de la sección 9.
+3. Cerrar el caso utilizando la guía de registro de la sección 9.
 
 ### 5B. Con compromiso
 1. Bloquear la IP de forma permanente (comando anterior).
@@ -140,22 +140,24 @@ También: exportar las alertas del Dashboard (CSV) y guardar capturas de pantall
 
 ---
 
-## 9. Registro del incidente
+## 9. Guía para documentar el incidente
 
-| Campo | Valor |
-|---|---|
-| ID incidente | IR-2026-001 |
-| Fecha/hora de detección | |
-| Fecha/hora de contención | |
-| Tiempo detección a contención | |
-| IP atacante | |
-| ¿IP en MISP? (evento #) | |
-| Activo afectado | |
-| Usuario objetivo | |
-| ¿Acceso logrado? | Sí / No |
-| Acciones realizadas | |
-| Resultado / estado | Cerrado / Escalado |
-| Responsable | |
+Esta sección explica qué información debe contener el registro del incidente y la finalidad de cada elemento. El registro se construye con los datos observados durante la detección, el análisis, la contención y la recuperación; esta guía no constituye un formulario para completar dentro del playbook.
+
+| Elemento que debe incluir el registro | Información que se debe documentar | Finalidad |
+|---|---|---|
+| Identificador del incidente | Identificador único asignado según la nomenclatura institucional, como `IR-2026-001`. | Permite localizar, relacionar y dar seguimiento al caso sin confundirlo con otros incidentes. |
+| Fecha y hora de detección | Momento en que Wazuh generó la alerta o el analista identificó el ataque, incluida la zona horaria. | Establece el inicio de la línea de tiempo y permite medir el tiempo de respuesta. |
+| Fecha y hora de contención | Momento en que se confirmó el bloqueo de la IP, el aislamiento del activo u otra medida de contención. | Demuestra cuándo se redujo el riesgo y permite comprobar el cumplimiento del objetivo de contención. |
+| Tiempo de detección a contención | Diferencia entre la detección y la contención, expresada en minutos. | Permite evaluar el desempeño del playbook frente al objetivo de menos de 1 minuto para la contención automática. |
+| IP atacante | Dirección IP registrada en `data.srcip`. | Identifica el origen observado, permite correlacionar eventos y verificar bloqueos o reincidencias. |
+| Relación con MISP | Resultado de la búsqueda de la IP en MISP y, cuando exista coincidencia, el identificador del evento correspondiente. | Documenta si la IP estaba asociada con un indicador de compromiso y respalda el enriquecimiento de la alerta. |
+| Activo afectado | Nombre del agente, servidor o servicio atacado, como `linux-server` o `agent-db`. | Define el alcance del incidente y facilita localizar la evidencia y las acciones aplicadas. |
+| Usuario objetivo | Usuario indicado en `data.dstuser` y, si aplica, la cuenta que consiguió autenticarse. | Permite determinar qué cuenta fue objetivo o pudo quedar comprometida y orientar las medidas de protección. |
+| Resultado de la autenticación | Conclusión basada en los eventos `Accepted`, `last -i` y el Dashboard sobre si hubo acceso exitoso. | Distingue un intento fallido de un compromiso confirmado y determina si corresponde escalar el incidente. |
+| Acciones realizadas | Comandos y medidas ejecutadas, como bloqueo, aislamiento, bloqueo de cuenta, preservación de evidencia y cambios realizados. | Mantiene la trazabilidad técnica, evita repetir acciones y permite auditar la respuesta. |
+| Resultado y estado | Estado final, como `Cerrado` o `Escalado`, junto con un resumen del resultado obtenido. | Indica si el incidente quedó resuelto o requiere investigación y seguimiento adicional. |
+| Responsables | Analista que atendió el incidente y, si se escaló, responsable que lo recibió. | Establece la responsabilidad operativa y facilita solicitar aclaraciones o continuar el seguimiento. |
 
 ---
 
@@ -171,14 +173,14 @@ También: exportar las alertas del Dashboard (CSV) y guardar capturas de pantall
 
 ## 11. Prueba del playbook (ejercicio de validación)
 
-| Paso | Acción | Resultado esperado |
-|---|---|---|
-| 1 | Desde Kali: `hydra -l root -P /usr/share/wordlists/rockyou.txt -t 4 ssh://<IP_AGENTE>` | Alerta 100001 en el Dashboard |
-| 2 | Revisar Slack | Mensaje de alerta recibido |
-| 3 | En el agente: `iptables -S INPUT \| grep DROP` | DROP a la IP de Kali |
-| 4 | Buscar `rule.id:100050` | Alerta de MISP (si la IP está cargada) |
-| 5 | En el agente: `grep Accepted /var/log/auth.log \| grep <IP_KALI>` | Sin resultados (no hubo acceso) |
-| 6 | Completar la sección 9 | Registro del incidente cerrado |
-| 7 | Esperar el timeout y ver `iptables -S INPUT` | La regla DROP desaparece |
+La validación debe comprobar el flujo completo de detección, notificación, contención, análisis y documentación:
 
----
+1. Generar desde Kali varios intentos fallidos contra el servicio SSH del agente de prueba; se espera la alerta 100001 en el Dashboard.
+2. Confirmar la recepción del mensaje correspondiente en Slack.
+3. Revisar en el agente la salida de `iptables -S INPUT | grep DROP`; debe observarse el bloqueo de la IP de Kali.
+4. Buscar `rule.id:100050` para comprobar el enriquecimiento con MISP cuando la IP esté registrada como indicador.
+5. Consultar los eventos de autenticación con `grep Accepted /var/log/auth.log | grep <IP_KALI>`; en una prueba sin compromiso no deben existir accesos aceptados.
+6. Verificar que el registro incluya la información descrita en la sección 9 y que el caso quede documentado como cerrado cuando corresponda.
+7. Esperar el tiempo de expiración configurado y comprobar en `iptables -S INPUT` que el bloqueo automático desaparezca.
+
+Los marcadores entre `< >` representan datos obtenidos durante la prueba o la alerta; no son espacios destinados a completarse en este documento.
