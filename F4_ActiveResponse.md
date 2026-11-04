@@ -48,9 +48,7 @@ Esperado: alerta **100001** (nivel 10). Funciona igual contra `agent-db` (192.16
      Debe aparecer `DROP all -- <IP_KALI> 0.0.0.0/0`.
    - Desde Kali, el ataque se queda sin respuesta (timeouts).
    - A los 10 minutos: línea `... delete ...` en el log y la regla desaparece.
-
-   ![alt text]({D307F27E-E52D-4591-9480-A97C9541BB38}-1.png)
-   
+   ![alt text](F4_Evidencias_ActiveResponse/{D307F27E-E52D-4591-9480-A97C9541BB38}-1.png)
 4. **Desbloquear antes de tiempo** (si necesitas repetir el ataque):
 ```bash
    iptables -L INPUT -n --line-numbers          # busca el número de la línea DROP
@@ -129,7 +127,7 @@ En el Dashboard (Threat Hunting → Events), filtra:
 ```
 rule.groups:virustotal
 ```
-![alt text]({D759F738-EA7B-4435-80D1-A0EDE44E3EE5}.png)
+![alt text](F4_Evidencias_ActiveResponse/{D759F738-EA7B-4435-80D1-A0EDE44E3EE5}.png)
 Debes ver una alerta tipo **"VirusTotal: Alert - /var/www/html/eicar.com - N engines detected this file"** (regla integrada 87105, nivel 12) con los campos `data.virustotal.positives` y `data.virustotal.permalink`.
  
 Si no aparece:
@@ -170,7 +168,7 @@ systemctl restart wazuh-manager
 ```bash
 touch /etc/passwd
 ```
-![alt text]({432028A2-4D3F-4868-8BBE-5E9A5608EBEF}.png)
+![alt text](F4_Evidencias_ActiveResponse/{432028A2-4D3F-4868-8BBE-5E9A5608EBEF}.png)
 (En 1-2 min llega el mensaje a Slack.) Si no llega: `tail /var/ossec/logs/integrations.log`.
 
 # 4. Conectar Wazuh con MISP para enriquecimiento de IoCs (Indicators of Compromise)
@@ -369,8 +367,8 @@ sudo tail -n 5 /var/ossec/logs/integrations.log
 ```
 
 Debe decir `IoC 192.168.100.50 encontrado en MISP`.
- ![alt text]({810D8129-C9D8-4CFB-9D23-FDAAC4510945}.png)
- ![alt text]({EB7249AF-6339-4F1D-8333-3E705B1CB612}.png)
+![alt text](F4_Evidencias_ActiveResponse/{810D8129-C9D8-4CFB-9D23-FDAAC4510945}.png)
+![alt text](F4_Evidencias_ActiveResponse/{EB7249AF-6339-4F1D-8333-3E705B1CB612}.png)
 **Prueba real:** ejecuta hydra desde Kali (regla 100001) o crea el archivo EICAR (regla 100060). En el Dashboard filtra `rule.id:100050`: verás la alerta de MISP.
  
 # 5. Implementar al menos un playbook de respuesta a incidentes documentado

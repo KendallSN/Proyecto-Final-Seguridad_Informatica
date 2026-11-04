@@ -51,8 +51,8 @@
    iptables -S INPUT | grep DROP
    tail -n 5 /var/ossec/logs/active-responses.log
    ```
-   ![alt text]({0837C7BF-38CB-4EDD-9D45-5974690E49BA}.png)
-   ![alt text]({D307F27E-E52D-4591-9480-A97C9541BB38}.png)
+   ![alt text](PB-01_Evidencias/{0837C7BF-38CB-4EDD-9D45-5974690E49BA}.png)
+   ![alt text](PB-01_Evidencias/{D307F27E-E52D-4591-9480-A97C9541BB38}.png)
    Debe aparecer una regla `-A INPUT -s <IP_ATACANTE>/32 -j DROP`. El marcador `<IP_ATACANTE>` representa la dirección obtenida de la alerta.
 4. Revisar si la IP está en MISP: buscar alerta `rule.id:100050` con la misma IP.
 
