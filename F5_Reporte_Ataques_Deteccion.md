@@ -145,20 +145,20 @@ El laboratorio detecta correctamente 3 de las 6 técnicas requeridas (50,0 %), l
 
 ## Referencias
 
-[1] NIST, *Guide to Intrusion Detection and Prevention Systems (IDPS)*, NIST Special Publication 800-94. Gaithersburg, MD, USA: National Institute of Standards and Technology, Feb. 2007.
+[1] NIST, "Guide to Intrusion Detection and Prevention Systems (IDPS)," NIST Special Publication 800-94, Feb. 2007.
 
-[2] MITRE, *ATT&CK Enterprise Matrix*. [Online]. Available: [https://attack.mitre.org/](https://attack.mitre.org/). [Accessed: 04-Nov-2026].
+[2] MITRE, "ATT&CK Enterprise Matrix." [Online]. Available: [https://attack.mitre.org/](https://attack.mitre.org/). [Accessed: 04-Nov-2026].
 
-[3] Wazuh, *Wazuh Documentation 4.9*. [Online]. Available: [https://documentation.wazuh.com/](https://documentation.wazuh.com/). [Accessed: 04-Nov-2026].
+[3] Wazuh, "Wazuh Documentation 4.9." [Online]. Available: [https://documentation.wazuh.com/](https://documentation.wazuh.com/). [Accessed: 04-Nov-2026].
 
-[4] OWASP Foundation, *OWASP Top 10:2021*. [Online]. Available: [https://owasp.org/Top10/](https://owasp.org/Top10/). [Accessed: 04-Nov-2026].
+[4] OWASP Foundation, "OWASP Top 10:2021." [Online]. Available: [https://owasp.org/Top10/](https://owasp.org/Top10/). [Accessed: 04-Nov-2026].
 
-[5] NIST, *Computer Security Incident Handling Guide*, NIST Special Publication 800-61 Rev. 2. Gaithersburg, MD, USA: National Institute of Standards and Technology, Aug. 2012.
+[5] NIST, "Computer Security Incident Handling Guide," NIST Special Publication 800-61 Rev. 2, Aug. 2012.
 
-[6] GTFOBins, *GTFOBins: find*. [Online]. Available: [https://gtfobins.github.io/gtfobins/find/](https://gtfobins.github.io/gtfobins/find/). [Accessed: 04-Nov-2026].
+[6] GTFOBins, "GTFOBins: find." [Online]. Available: [https://gtfobins.github.io/gtfobins/find/](https://gtfobins.github.io/gtfobins/find/). [Accessed: 04-Nov-2026].
 
-[7] Red Canary, *Atomic Red Team*. [Online]. Available: [https://github.com/redcanaryco/atomic-red-team](https://github.com/redcanaryco/atomic-red-team). [Accessed: 04-Nov-2026].
+[7] Red Canary, "Atomic Red Team." [Online]. Available: [https://github.com/redcanaryco/atomic-red-team](https://github.com/redcanaryco/atomic-red-team). [Accessed: 04-Nov-2026].
 
-[8] Microsoft, *Microsoft Vulnerable Driver Blocklist*. [Online]. Available: [https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules). [Accessed: 04-Nov-2026].
+[8] Microsoft, "Microsoft Vulnerable Driver Blocklist." [Online]. Available: [https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules). [Accessed: 04-Nov-2026].
 
-[9] MITRE, *CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')*. [Online]. Available: [https://cwe.mitre.org/data/definitions/89.html](https://cwe.mitre.org/data/definitions/89.html). [Accessed: 04-Nov-2026].
+[9] MITRE, "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')." [Online]. Available: [https://cwe.mitre.org/data/definitions/89.html](https://cwe.mitre.org/data/definitions/89.html). [Accessed: 04-Nov-2026].
