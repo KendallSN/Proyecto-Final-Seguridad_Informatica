@@ -171,7 +171,7 @@ Para no dejar el requisito sin respuesta, se construyó una **matriz indicativa*
 | Art. 25: Protección por diseño y por defecto | Minimizar datos y aplicar controles técnicos desde el diseño | Hardening SSH, AppArmor, mínimo privilegio, bloqueo de cuentas | <span class="badge partial">Parcial</span> |
 | Art. 30: Registro de actividades de tratamiento | Mantener un registro de tratamientos | No cubierto por SCA; requiere documentación organizacional | <span class="badge pending">Pendiente</span> |
 | Art. 32: Seguridad del tratamiento | Confidencialidad, integridad, disponibilidad y resiliencia; pruebas periódicas | Control de acceso, AppArmor, políticas de contraseña, SCA periódico, FIM | <span class="badge partial">Parcial</span> |
-| Art. 33-34: Notificación de brechas | Detectar, evaluar y notificar brechas | Alertas Wazuh, Active Response y F5; detección efectiva 50.0% y específica 33.3%, con brecha de FIM | <span class="badge partial">Parcial</span> |
+| Art. 33-34: Notificación de brechas | Detectar, evaluar y notificar brechas | Alertas Wazuh, Active Response y F5; detección específica 50.0% y brecha de FIM | <span class="badge partial">Parcial</span> |
 | Art. 35: Evaluación de impacto | DPIA para tratamientos de alto riesgo | No cubierto; requiere proceso legal | <span class="badge pending">Pendiente</span> |
 
 **Conclusión de GDPR.** El laboratorio tiene controles técnicos que contribuyen a los artículos 25 y 32, y capacidades de detección que ayudan al 33-34.
@@ -709,7 +709,7 @@ Estas conclusiones describen la configuración medida en tres agentes en dos fec
 
 [13] Center for Internet Security, "CIS Critical Security Controls v8," CIS, 2021. [Online]. Available: [https://www.cisecurity.org/controls/](https://www.cisecurity.org/controls/). [Accessed: 04-Nov-2026].
 
-[14] Proyecto, "F5: simulación de ataques y tasa de detección," Informe técnico, Fase 5, 2026. `F5_Informe_Ataques_Deteccion.md`.
+[14] Proyecto, "F5: simulación de ataques y tasa de detección," Informe técnico, Fase 5, 2026. `F5_Reporte_Ataques_Deteccion.md`.
 
 [15] Proyecto, "F6: datos congelados del análisis SCA," Documento de trabajo, 2026. `F6_Assets/ANALISIS_DATOS.md`.
 
