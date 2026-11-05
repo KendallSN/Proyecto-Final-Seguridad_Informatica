@@ -724,7 +724,7 @@ Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Asset
 | `Configuration-Assestments/checks_db.csv` | agent-db | Antes | 198 | 73/103/22 | <span class="hash">366ee8ae0965cd14…</span> |
 | `Configuration-Assestments-PostHardening/checks_db.csv` | agent-db | Después | 198 | 82/94/22 | <span class="hash">fd415ac60d5aef15…</span> |
 | `Configuration-Assestments/checks_windows.csv` | agent-windows | Antes | 359 | 141/218/0 | <span class="hash">c81d78573ca84972…</span> |
-| `Configuration-Assestments-PostHardening/checks_windows.csv` | agent-windows | Después | 359 | 147/212/0 | <span class="hash">fb604f671087012a…</span> |
+| `Configuration-Assestments-PostHardening/checks_windows.csv` | agent-windows | Después | 359 | 147/212/0 | <span class="hash">96f6f1b37e2f74b8…</span> |
 
 # Anexo B: Controles ganados
 
