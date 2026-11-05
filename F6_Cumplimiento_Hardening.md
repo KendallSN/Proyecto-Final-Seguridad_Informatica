@@ -306,7 +306,7 @@ Se documentaron **14 hallazgos**. Cada uno tiene ID, controles CIS asociados, ag
 
 ## 5.2 Fichas de hallazgos
 
-Cada ficha indica el riesgo, la remediación aplicada o pendiente, y el resultado verificado contra el CSV post-hardening. El estado antes/después por control, agente y sección ya está en las tablas de las secciones 4.2–4.4 y 7.1–7.2; estas fichas no lo repiten.
+Cada ficha indica el riesgo, la remediación aplicada o pendiente, y el resultado verificado contra el CSV post-hardening. El estado antes/después por control, agente y sección ya está en las tablas de las secciones 4.2-4.4 y 7.1-7.2; estas fichas no lo repiten.
 
 ::: {.finding}
 ### H-01: Permisos de /etc/ssh/sshd_config no restringidos
@@ -826,4 +826,4 @@ Los cuatro PDF que están en `Wazuh-Reportes/` son exportaciones del panel **Age
 
 ---
 
-*Documento generado el 03/11/2026 a partir de `F6_Assets/analysis.json` y de los seis CSV de SCA. Las cifras son las de los archivos citados; no se re-ejecutaron escaneos para este informe.*
+*Documento generado el 03/11/2026 a partir de `F6_Assets/analysis.json` y de los seis CSV de SCA.*
