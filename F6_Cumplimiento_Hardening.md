@@ -713,8 +713,6 @@ Estas conclusiones describen la configuración medida en tres agentes en dos fec
 
 [15] Proyecto, "F6: datos congelados del análisis SCA," Documento de trabajo, 2026. `F6_Assets/ANALISIS_DATOS.md`.
 
-**Nota sobre los PDF de CIS.** Los benchmarks de CIS están protegidos por sus términos de uso. Los PDF locales usados como referencia no se publican en el repositorio público; se clasifican en el anexo C y se entregan por un canal privado si el docente los solicita.
-
 # Anexo A: Inventario de evidencia
 
 Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Assets/ANALISIS_DATOS.md` [15]. La tabla incluye filas, distribución aprobado/fallido/N/A y hash SHA-256 (primeros 16 caracteres, para identificar el archivo exacto sin reproducir el hash completo).
@@ -784,7 +782,7 @@ Durante la fase se consultaron PDFs de CIS como referencia local. No todos corre
 
 Las versiones exactas que Wazuh usa están en la tabla de la sección 2.2. Los PDF exactos de Ubuntu v1.0.0 y Windows v2.0.0 no están en el repositorio; se citan a través del YAML de Wazuh.
 
-**Licencia.** Los términos de CIS prohíben alojar benchmarks en sitios de terceros. El repositorio del proyecto es público, por lo que los PDF se mantienen locales y se agregan a `.gitignore` (`ProyectoUntracked/Benchmarks/*.pdf`).
+**Licencia.** Los benchmarks de CIS están protegidos por sus términos de uso y no se redistribuyen.
 
 # Anexo D: Exportación desde el dashboard
 
