@@ -1,6 +1,6 @@
 # Resumen ejecutivo
 
-Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 [4] sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening, el 03/11/2026.
+Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 [4] sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening (03/11/2026 en Linux y Debian, y 04/11/2026 en Windows tras un reescaneo).
 
 El entregable se organiza alrededor de cinco requisitos. La tabla siguiente resume dónde se cumple cada uno y con qué evidencia.
 
@@ -9,7 +9,7 @@ El entregable se organiza alrededor de cinco requisitos. La tabla siguiente resu
 | 1 | Revisar el módulo de compliance (PCI DSS, GDPR, HIPAA, NIST 800-53) | Sección 3 | Columna `Compliance` de los CSV + vista SCA del dashboard | <span class="badge ok">Resuelto</span> |
 | 2 | Ejecutar SCA sobre todos los agentes | Sección 4 | 6 CSV: 3 antes + 3 después | <span class="badge ok">Resuelto</span> |
 | 3 | Documentar ≥ 10 hallazgos con plan de remediación | Sección 5 | 14 fichas H-01 a H-14 | <span class="badge ok">Resuelto</span> |
-| 4 | Aplicar hardening CIS Level 1 | Secciones 6 y 7 | 23 controles ganados, 0 regresiones | <span class="badge ok">Resuelto</span> |
+| 4 | Aplicar hardening CIS Level 1 | Secciones 6 y 7 | 24 controles ganados, 0 regresiones | <span class="badge ok">Resuelto</span> |
 | 5 | Generar y exportar el reporte ejecutivo de cumplimiento | Este documento y anexo D | Seis CSV del SCA (tres antes, tres después) + este PDF | <span class="badge ok">Resuelto</span> |
 
 El reporte ejecutivo se construyó a partir de las seis exportaciones CSV del módulo SCA del dashboard. El anexo D documenta el procedimiento de exportación.
@@ -20,14 +20,14 @@ El reporte ejecutivo se construyó a partir de las seis exportaciones CSV del m�
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `agent-linux` | Ubuntu 22.04 LTS | cis_ubuntu22-04 | 182 | 70/110 | 38.9% | 78/102 | 43.3% | +4.4 pp |
 | `agent-db` | Debian 13 (trixie) | cis_debian11 | 198 | 73/103 | 41.5% | 82/94 | 46.6% | +5.1 pp |
-| `agent-windows` | Windows Server 2022 | cis_win2022 | 359 | 141/218 | 39.3% | 147/212 | 40.9% | +1.6 pp |
+| `agent-windows` | Windows Server 2022 | cis_win2022 | 359 | 141/218 | 39.3% | 148/211 | 41.2% | +1.9 pp |
 
-En conjunto se evaluaron **739 controles** (suma de los tres agentes). Los aprobados pasaron de **284 a 307** y los fallidos de **431 a 408**. Se ganaron **23 controles** y no se perdió ninguno: **0 regresiones**.
+En conjunto se evaluaron **739 controles** (suma de los tres agentes). Los aprobados pasaron de **284 a 308** y los fallidos de **431 a 407**. Se ganaron **24 controles** y no se perdió ninguno: **0 regresiones**.
 
 | Indicador | Antes | Después | Δ |
 | --- | ---: | ---: | ---: |
-| Controles aprobados | 284 | 307 | +23 |
-| Controles fallidos | 431 | 408 | -23 |
+| Controles aprobados | 284 | 308 | +24 |
+| Controles fallidos | 431 | 407 | -24 |
 | No aplicables | 24 | 24 | 0 |
 | Hallazgos resueltos | — | 11 de 14 | — |
 | Hallazgos parciales | — | 0 de 14 | — |
@@ -38,7 +38,7 @@ En conjunto se evaluaron **739 controles** (suma de los tres agentes). Los aprob
 - El hardening cerró los vectores de acceso remoto más importantes: permisos de `sshd_config`, `PermitRootLogin`, `MaxAuthTries`, `MaxStartups`, `LoginGraceTime`, reenvío X11/TCP y confinamiento de AppArmor. Son controles que reducen la superficie del ataque de fuerza bruta de F5 (T1110.001), aunque la causa raíz de esa demo fue una contraseña débil asignada a propósito.
 - En Windows se cerraron las políticas de contraseña, bloqueo de cuenta e inactividad de sesión. El score subió poco porque el agente tiene 359 controles y la sección 18 (plantillas administrativas) concentra 219, de los cuales 161 siguen fallando.
 - Los tres hallazgos pendientes son estructurales o requieren una ventana de cambio: `AllowUsers`, contraseña de GRUB, y particiones separadas para `/var/log` y `/var/log/audit`. Ninguno invalida el hardening aplicado; quedan priorizados en la sección 8.
-- El resultado global sigue lejos de estar listo para producción: 43.3%, 46.6% y 40.9% miden configuración y dejan fuera cualquier certificación formal.
+- El resultado global sigue lejos de estar listo para producción: 43.3%, 46.6% y 41.2% miden configuración y dejan fuera cualquier certificación formal.
 
 # 1. Introducción y alcance
 
@@ -67,7 +67,7 @@ La evidencia de ataques de F5 [14] se capturó **antes** del hardening. Eso expl
 | Fuente | Uso en este informe |
 | --- | --- |
 | `Configuration-Assestments/checks_*.csv` | Línea base SCA del 02/11/2026 |
-| `Configuration-Assestments-PostHardening/checks_*.csv` | Medición post-hardening del 03/11/2026 |
+| `Configuration-Assestments-PostHardening/checks_*.csv` | Medición post-hardening (03/11/2026; Windows, 04/11/2026) |
 | Dashboard Wazuh 4.9.2 | Origen de los seis CSV; vista SCA por agente y vista Regulatory Compliance |
 | YAML de políticas de Wazuh | Fuente autoritativa de la versión del benchmark y de los IDs CIS |
 | `F6_Assets/analysis.json` | Datos congelados que alimentan todas las tablas y gráficos |
@@ -117,7 +117,7 @@ Wazuh expone el cumplimiento en dos capas distintas. La primera es **SCA**: cada
 
 La comparación se hizo por **ID CIS**. Para cada agente se cargaron los dos CSV, se indexaron por el valor `cis` del arreglo `Compliance` y se clasificó cada control en cuatro categorías: se mantuvo aprobado, se mantuvo fallido, se ganó (`failed → passed`) o se perdió (`passed → failed`). Los controles que no aparecen en una de las dos mediciones se reportan como no comparables; en este caso no hubo diferencias de inventario entre antes y después.
 
-La línea base es del 02/11/2026. El hardening se aplicó el 03/11/2026. La política y el agente no cambiaron entre mediciones.
+La línea base es del 02/11/2026. El hardening se aplicó el 03/11/2026. La política no cambió entre mediciones. En `agent-windows` se hizo un reescaneo el 04/11/2026 para reflejar los cambios aplicados después del CSV original.
 
 ## 2.5 Limitaciones metodológicas
 
@@ -401,7 +401,7 @@ Cada ficha indica el riesgo, la remediación aplicada o pendiente, y el resultad
 
 **CIS:** `2.3.1.2` · **Severidad:** Media · **Agentes:** `agent-windows` · **Estado:** <span class="badge ok">Resuelto</span>
 
-**Riesgo.** Puerta de entrada innecesaria y cuenta sin trazabilidad individual. **Remediación.** GPO `Guest account status = Disabled`. Verificado por inspección directa del sistema el 04/11/2026 (`Get-LocalUser Guest` → `Enabled: False`)<!-- TODO: adjuntar fuente/log formal de esta verificación -->.
+**Riesgo.** Puerta de entrada innecesaria y cuenta sin trazabilidad individual. **Remediación.** GPO `Guest account status = Disabled`. Verificado por inspección directa el 04/11/2026 y confirmado por SCA en el reescaneo de esa fecha: el control `2.3.1.2` figura como aprobado.
 :::
 
 ::: {.finding}
@@ -417,7 +417,7 @@ Cada ficha indica el riesgo, la remediación aplicada o pendiente, y el resultad
 
 **CIS:** `2.3.7.4`, `2.3.7.5` · **Severidad:** Media · **Agentes:** `agent-windows` · **Estado:** <span class="badge ok">Resuelto</span>
 
-**Riesgo.** Falta la advertencia legal de inicio de sesión, requisito común de PCI DSS/HIPAA. **Remediación.** GPO: `Message title` y `Message text`, ambos configurados. Verificado por inspección directa del sistema el 04/11/2026 (registro `legalnoticecaption`/`legalnoticetext` con contenido)<!-- TODO: adjuntar fuente/log formal de esta verificación -->.
+**Riesgo.** Falta la advertencia legal de inicio de sesión, requisito común de PCI DSS/HIPAA. **Remediación.** GPO: `Message title` y `Message text`, ambos configurados. Verificado por inspección directa el 04/11/2026 (registro `legalnoticecaption`/`legalnoticetext` con contenido). SCA sigue reportando `2.3.7.4` como fallido por un error de sintaxis en la política `cis_win2022`: la regla dice `legalnoticetext-> r:\w+`, sin el espacio antes de `->`, mientras que la regla equivalente del título sí lo tiene y pasa. El control está configurado; el defecto está en el check.
 :::
 
 Los hallazgos pendientes (H-02, H-07, H-09) están priorizados junto con el resto de los controles residuales en la matriz de la sección 8.4.
@@ -499,11 +499,11 @@ En `agent-windows` se configuró política de grupo local (por ejemplo, con `gpe
 | `2.3.7.3` | Machine inactivity limit | 900 segundos | <span class="badge ok">Aprobado</span> |
 | `2.3.7.5` | Interactive logon: Message title | Configurado | <span class="badge ok">Aprobado</span> |
 | `2.3.7.4` | Interactive logon: Message text | Configurado | <span class="badge ok">Aprobado*</span> |
-| `2.3.1.2` | Accounts: Guest account status | Disabled | <span class="badge ok">Aprobado*</span> |
+| `2.3.1.2` | Accounts: Guest account status | Disabled | <span class="badge ok">Aprobado</span> |
 
 **Procedimiento reproducible.** La ruta es `Computer Configuration → Windows Settings → Security Settings → Account Policies` para contraseña y bloqueo, y `Local Policies → Security Options` para inactividad, mensaje legal y Guest. En un entorno con dominio, esto se haría con una GPO centralizada; en este laboratorio, con política local.
 
-\* `2.3.7.4` y `2.3.1.2` se verificaron por inspección directa del sistema el 04/11/2026, posterior al CSV post-hardening del 03/11; aún no se confirmaron con un nuevo escaneo SCA.
+\* `2.3.1.2` quedó confirmado por SCA en el reescaneo del 04/11/2026. `2.3.7.4` se verificó por inspección directa; SCA lo reporta fallido por un error de sintaxis en la política, no por la configuración (ver H-14).
 
 ## 6.5 Lo que deliberadamente no se aplicó
 
@@ -524,13 +524,13 @@ Cada cambio se validó con el SCA post-hardening. No se detectaron regresiones: 
 
 ## 7.1 Antes y después por agente
 
-Los puntajes antes/después por agente (182/198/359 controles; 38.9→43.3%, 41.5→46.6%, 39.3→40.9%) ya están en "Resumen de resultados", al inicio del informe.
+Los puntajes antes/después por agente (182/198/359 controles; 38.9→43.3%, 41.5→46.6%, 39.3→41.2%) ya están en "Resumen de resultados", al inicio del informe.
 
-El agregado de controles pasó de 284/715 (39.7%) a 307/715 (42.9%). Es una mejora modesta pero real, y sobre todo **sin regresiones**.
+El agregado de controles pasó de 284/715 (39.7%) a 308/715 (43.1%). Es una mejora modesta pero real, y sobre todo **sin regresiones**.
 
 ## 7.2 Controles ganados
 
-Se ganaron **23 controles** en total: 8 en `agent-linux`, 9 en `agent-db` y 6 en `agent-windows`. El listado completo, con el título de cada control, está en el anexo B.
+Se ganaron **24 controles** en total: 8 en `agent-linux`, 9 en `agent-db` y 7 en `agent-windows`. El listado completo, con el título de cada control, está en el anexo B.
 
 ## 7.3 Regresiones y estabilidad
 
@@ -540,18 +540,18 @@ Se ganaron **23 controles** en total: 8 en `agent-linux`, 9 en `agent-db` y 6 en
 
 | Framework | agent-linux | agent-db | agent-windows |
 | --- | --- | --- | --- |
-| PCI DSS v4.0 | 36.9% → 41.2% (+4.3 pp) | 41.8% → 46.8% (+5.0 pp) | 38.6% → 41.1% (+2.5 pp) |
-| PCI DSS v3.2.1 | 38.5% → 43.5% (+5.0 pp) | 42.1% → 47.8% (+5.7 pp) | 38.4% → 38.8% (+0.4 pp) |
+| PCI DSS v4.0 | 36.9% → 41.2% (+4.3 pp) | 41.8% → 46.8% (+5.0 pp) | 38.6% → 41.6% (+3.0 pp) |
+| PCI DSS v3.2.1 | 38.5% → 43.5% (+5.0 pp) | 42.1% → 47.8% (+5.7 pp) | 38.4% → 39.3% (+0.9 pp) |
 | HIPAA | 38.6% → 41.0% (+2.4 pp) | 34.5% → 38.1% (+3.6 pp) | 57.9% → 60.5% (+2.6 pp) |
 | NIST 800-53 | 34.4% → 39.7% (+5.3 pp) | 32.8% → 38.9% (+6.1 pp) | 48.7% → 49.3% (+0.6 pp) |
-| ISO 27001 | 37.5% → 41.7% (+4.2 pp) | 40.9% → 45.7% (+4.8 pp) | 37.0% → 39.1% (+2.1 pp) |
-| SOC 2 | 36.7% → 41.8% (+5.1 pp) | 41.6% → 47.4% (+5.8 pp) | 37.3% → 37.8% (+0.5 pp) |
+| ISO 27001 | 37.5% → 41.7% (+4.2 pp) | 40.9% → 45.7% (+4.8 pp) | 37.0% → 39.6% (+2.6 pp) |
+| SOC 2 | 36.7% → 41.8% (+5.1 pp) | 41.6% → 47.4% (+5.8 pp) | 37.3% → 38.3% (+1.0 pp) |
 | CMMC v2.0 | 38.9% → 43.7% (+4.8 pp) | 42.2% → 47.6% (+5.4 pp) | 37.9% → 40.3% (+2.4 pp) |
-| CIS CSC v8 | 38.0% → 42.7% (+4.7 pp) | 41.7% → 47.0% (+5.3 pp) | 38.5% → 40.5% (+2.0 pp) |
+| CIS CSC v8 | 38.0% → 42.7% (+4.7 pp) | 41.7% → 47.0% (+5.3 pp) | 38.5% → 40.9% (+2.4 pp) |
 
 ![Figura 1. Cobertura por framework antes y después.](F6_Assets/03_cobertura_frameworks.png){width=100%}
 
-La mejora es consistente en los ocho frameworks, aunque de magnitud distinta. Los mayores saltos están en NIST 800-53 de `agent-db` (+6.1 pp) y en PCI DSS v3.2.1 de `agent-db` (+5.7 pp), porque los controles SSH y AppArmor están mapeados a varios requisitos de esos frameworks. En `agent-windows`, PCI DSS v3.2.1 casi no se movió (+0.4 pp) porque los controles ganados están mapeados sobre todo a PCI DSS v4.0, HIPAA y CMMC.
+La mejora es consistente en los ocho frameworks, aunque de magnitud distinta. Los mayores saltos están en NIST 800-53 de `agent-db` (+6.1 pp) y en PCI DSS v3.2.1 de `agent-db` (+5.7 pp), porque los controles SSH y AppArmor están mapeados a varios requisitos de esos frameworks. En `agent-windows`, PCI DSS v3.2.1 se movió menos (+0.9 pp) porque los controles ganados están mapeados sobre todo a PCI DSS v4.0, HIPAA y CMMC.
 
 ## 7.5 Distribución de fallos por sección
 
@@ -561,11 +561,11 @@ La figura muestra que el problema residual no está distribuido de forma uniform
 
 ## 7.6 Estado de los hallazgos
 
-Nueve hallazgos quedaron resueltos, uno parcial y cuatro pendientes. La diferencia entre "resuelto" y "score alto" es importante: los 23 controles ganados no mueven el score global a un valor alto porque el benchmark tiene cientos de controles. El valor del hardening está en qué controles se cerraron, no solo en cuántos puntos subió el porcentaje.
+Once hallazgos quedaron resueltos y tres pendientes. La diferencia entre "resuelto" y "score alto" es importante: los 24 controles ganados no mueven el score global a un valor alto porque el benchmark tiene cientos de controles. El valor del hardening está en qué controles se cerraron, no solo en cuántos puntos subió el porcentaje.
 
 ## 7.7 Interpretación
 
-**Por qué Linux subió más que Windows.** En `agent-linux` y `agent-db` los controles cerrados son 8 y 9, sobre 180 y 176 controles evaluables respectivamente: eso explica saltos de +4.4 pp y +5.1 pp. En `agent-windows` se cerraron 6 controles sobre 359, lo que da +1.6 pp. El tamaño del denominador importa: un mismo esfuerzo mueve menos el score cuando el benchmark tiene más checks.
+**Por qué Linux subió más que Windows.** En `agent-linux` y `agent-db` los controles cerrados son 8 y 9, sobre 180 y 176 controles evaluables respectivamente: eso explica saltos de +4.4 pp y +5.1 pp. En `agent-windows` se cerraron 7 controles sobre 359, lo que da +1.9 pp. El tamaño del denominador importa: un mismo esfuerzo mueve menos el score cuando el benchmark tiene más checks.
 
 **Por qué el score no es la única métrica.** Un control como `PermitRootLogin no` vale lo mismo que "no mostrar el último usuario" en el score, aunque el primero cierra un vector de root remoto y el segundo es cosmético. Por eso el informe prioriza por hallazgos y por secciones, no solo por porcentaje.
 
@@ -670,8 +670,8 @@ Los cinco requisitos están cumplidos, con la evidencia y la sección que sostie
 
 ## 9.2 Resultados principales
 
-- Los tres agentes mejoraron: `agent-linux` +4.4 pp, `agent-db` +5.1 pp y `agent-windows` +1.6 pp.
-- Se ganaron 23 controles y no se perdió ninguno.
+- Los tres agentes mejoraron: `agent-linux` +4.4 pp, `agent-db` +5.1 pp y `agent-windows` +1.9 pp.
+- Se ganaron 24 controles y no se perdió ninguno.
 - Se cerraron controles SSH que limitan la fuerza bruta y el acceso remoto; la demo de F5 usó una contraseña débil de prueba.
 - Se cerraron las políticas de contraseña, bloqueo e inactividad de Windows.
 - Quedan 3 hallazgos pendientes, todos priorizados.
@@ -715,16 +715,16 @@ Estas conclusiones describen la configuración medida en tres agentes en dos fec
 
 # Anexo A: Inventario de evidencia
 
-Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Assets/ANALISIS_DATOS.md` [15]. La tabla incluye filas, distribución aprobado/fallido/N/A y hash SHA-256 (primeros 16 caracteres, para identificar el archivo exacto sin reproducir el hash completo).
+Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Assets/ANALISIS_DATOS.md` [15]. La tabla incluye el agente, la fase y la distribución aprobado/fallido/N/A de cada archivo.
 
-| Archivo | Agente | Fase | Filas | P/F/N/A | SHA-256 |
-| --- | --- | --- | ---: | ---: | --- |
-| `Configuration-Assestments/checks_agente-linux.csv` | agent-linux | Antes | 182 | 70/110/2 | <span class="hash">fd1ac1794235d3a0…</span> |
-| `Configuration-Assestments-PostHardening/checks_agente-linux.csv` | agent-linux | Después | 182 | 78/102/2 | <span class="hash">2cf946c95d5fe7c2…</span> |
-| `Configuration-Assestments/checks_db.csv` | agent-db | Antes | 198 | 73/103/22 | <span class="hash">366ee8ae0965cd14…</span> |
-| `Configuration-Assestments-PostHardening/checks_db.csv` | agent-db | Después | 198 | 82/94/22 | <span class="hash">fd415ac60d5aef15…</span> |
-| `Configuration-Assestments/checks_windows.csv` | agent-windows | Antes | 359 | 141/218/0 | <span class="hash">c81d78573ca84972…</span> |
-| `Configuration-Assestments-PostHardening/checks_windows.csv` | agent-windows | Después | 359 | 147/212/0 | <span class="hash">96f6f1b37e2f74b8…</span> |
+| Archivo | Agente | Fase | Filas | P/F/N/A |
+| --- | --- | --- | ---: | ---: |
+| `Configuration-Assestments/checks_agente-linux.csv` | agent-linux | Antes | 182 | 70/110/2 |
+| `Configuration-Assestments-PostHardening/checks_agente-linux.csv` | agent-linux | Después | 182 | 78/102/2 |
+| `Configuration-Assestments/checks_db.csv` | agent-db | Antes | 198 | 73/103/22 |
+| `Configuration-Assestments-PostHardening/checks_db.csv` | agent-db | Después | 198 | 82/94/22 |
+| `Configuration-Assestments/checks_windows.csv` | agent-windows | Antes | 359 | 141/218/0 |
+| `Configuration-Assestments-PostHardening/checks_windows.csv` | agent-windows | Después | 359 | 148/211/0 |
 
 # Anexo B: Controles ganados
 
@@ -765,6 +765,7 @@ Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Asset
 | `1.2.4` | Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'. |
 | `2.3.7.3` | Ensure 'Interactive logon: Machine inactivity limit' is set to '900 or fewer second(s), but not 0'. |
 | `2.3.7.5` | Configure 'Interactive logon: Message title for users attempting to log on'. |
+| `2.3.1.2` | Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only). |
 
 # Anexo C: Benchmarks y PDFs locales
 
@@ -824,4 +825,4 @@ Los cuatro PDF que están en `Wazuh-Reportes/` son exportaciones del panel **Age
 
 ---
 
-*Documento generado el 03/11/2026 a partir de `F6_Assets/analysis.json` y de los seis CSV de SCA.*
+*Documento generado el 04/11/2026 a partir de `F6_Assets/analysis.json` y de los seis CSV de SCA.*
