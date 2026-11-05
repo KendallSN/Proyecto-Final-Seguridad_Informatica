@@ -214,7 +214,7 @@ curl -k -H "Authorization: scsjJmGe2M46sZZSBNEa4lbK4NsGKGtwOiXlNhFK" -H "Accept:
 2. Ya dentro del evento, en la pestaña principal pulsa Add Attribute (botón +):
   - Category: Network activity
   - Type: ip-src
-  - Value: la IP real de Kali, por ejemplo 192.168.100.99, sin espacios ni texto extra.
+  - Value: la IP real de Kali, por ejemplo 192.168.100.50, sin espacios ni texto extra.
   - Distribution: Inherit from event
   - Marca For Intrusion Detection System.
   - Submit.

@@ -6,12 +6,12 @@ Pega una línea, Enter. Debes ver `Phase 2: decoder` y `Phase 3: rule id`.
 
 | Prueba | Línea a pegar | Esperado |
 |---|---|---|
-| Regla 1 (pégala **6 veces seguidas**) | `Oct 31 10:00:01 linux-server sshd[1234]: Failed password for root from 192.168.100.99 port 40000 ssh2` | A la 6ª: regla **100001** |
+| Regla 1 (pégala **6 veces seguidas**) | `Oct 31 10:00:01 linux-server sshd[1234]: Failed password for root from 192.168.100.50 port 40000 ssh2` | A la 6ª: regla **100001** |
 | Regla 3 | `Oct 31 10:00:01 linux-server sudo:     pepe : user NOT in sudoers ; TTY=pts/0 ; PWD=/home/pepe ; USER=root ; COMMAND=/usr/bin/ls` | **100003** |
 | Regla 3b | `Oct 31 10:00:01 linux-server sudo:     pepe : TTY=pts/0 ; PWD=/home/pepe ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow` | **100013** |
-| Regla 4 | `Oct 31 10:00:01 linux-server kernel: [ 1234.567890] WAZUH_4444_IN: IN=enp0s3 OUT= MAC=08:00:27:aa:bb:cc:08:00:27:dd:ee:ff:08:00 SRC=192.168.100.99 DST=192.168.100.20 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=1234 DF PROTO=TCP SPT=44444 DPT=4444 WINDOW=64240 RES=0x00 SYN URGP=0` | Decoder `wz-fw-port4444`, regla **100004** |
-| Decoder Apache | `WZ-APACHE 192.168.100.99 - - [31/Oct/2026:10:00:00 -0600] "GET /index.php?id=1%27%20OR%201=1-- HTTP/1.1" 200 512 "-" "sqlmap/1.7.2#stable (https://sqlmap.org)"` | Campos `srcip`, `url`, `user_agent`; reglas **100021** y/o **100022** |
-| Decoder PostgreSQL | `WZ-PG 2026-10-31 10:00:00.123 CST [4321] postgres@appdb 192.168.100.99 FATAL:  password authentication failed for user "postgres"` | Campos `srcuser`, `db`, `srcip`; regla **100031** |
+| Regla 4 | `Oct 31 10:00:01 linux-server kernel: [ 1234.567890] WAZUH_4444_IN: IN=enp0s3 OUT= MAC=08:00:27:aa:bb:cc:08:00:27:dd:ee:ff:08:00 SRC=192.168.100.50 DST=192.168.100.20 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=1234 DF PROTO=TCP SPT=44444 DPT=4444 WINDOW=64240 RES=0x00 SYN URGP=0` | Decoder `wz-fw-port4444`, regla **100004** |
+| Decoder Apache | `WZ-APACHE 192.168.100.50 - - [31/Oct/2026:10:00:00 -0600] "GET /index.php?id=1%27%20OR%201=1-- HTTP/1.1" 200 512 "-" "sqlmap/1.7.2#stable (https://sqlmap.org)"` | Campos `srcip`, `url`, `user_agent`; reglas **100021** y/o **100022** |
+| Decoder PostgreSQL | `WZ-PG 2026-10-31 10:00:00.123 CST [4321] postgres@appdb 192.168.100.50 FATAL:  password authentication failed for user "postgres"` | Campos `srcuser`, `db`, `srcip`; regla **100031** |
 
 ### 1 Regla 1 — Fuerza bruta SSH (desde Kali)
 Dentro de `<ossec_config>`, en la sección `</ossec_config>` se configuró el active response para la regla 100001 pero se podria agregar para la 100004 y 100021:

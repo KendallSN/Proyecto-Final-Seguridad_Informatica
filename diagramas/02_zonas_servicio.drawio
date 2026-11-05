@@ -48,7 +48,7 @@
         <mxCell id="zoneAtk" value="Atacante" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="140" y="700" width="1060" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="attacker" value="attacker&#10;.50 (asignada; .99 sugerida)&#10;Kali Linux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="attacker" value="attacker&#10;.50 (asignada; .50 sugerida)&#10;Kali Linux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="530" y="740" width="280" height="80" as="geometry" />
         </mxCell>
 

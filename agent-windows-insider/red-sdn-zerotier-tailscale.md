@@ -20,12 +20,12 @@ Instantánea de los siete dispositivos autorizados. Las direcciones, versiones y
 
 | Device ID  | Name                       | Status       | ZT IP -        | Public IP            | ZT Version      | Last Active       |
 | ---------- | -------------------------- | ------------ | -------------- | -------------------- | --------------- | ----------------- |
-| 001460a6a4 | Wazuh Manager              | Autorizado | 192.168.100.10 | 186.15.99.125/41897  | v1.16.2 Linux   | a few seconds ago |
-| 31aee56c38 | misp                       | Autorizado | 192.168.100.11 | 186.15.99.125/33280  | v0.16.2 Linux   | a minute ago      |
+| 001460a6a4 | Wazuh Manager              | Autorizado | 192.168.100.10 | 186.15.50.125/41897  | v1.16.2 Linux   | a few seconds ago |
+| 31aee56c38 | misp                       | Autorizado | 192.168.100.11 | 186.15.50.125/33280  | v0.16.2 Linux   | a minute ago      |
 | a1d457349a | Servidor web Apache        | Autorizado | 192.168.100.20 | 201.207.176.73/1748  | v1.16.2 Linux   | a few seconds ago |
 | d790710c26 | Active Directory http: SMB | Autorizado | 192.168.100.30 | 4.168.200.22/9993    | v1.16.2 Windows | a minute ago      |
 | 95423a526e | JuanC                      | Autorizado | 192.168.100.31 | 181.78.117.209/21057 | v1.16.2 Windows | a minute ago      |
-| 16fa28579e | base-datos                 | Autorizado | 192.168.100.40 | 186.15.99.21/41774   | v1.16.2 Linux   | a few seconds ago |
+| 16fa28579e | base-datos                 | Autorizado | 192.168.100.40 | 186.15.50.21/41774   | v1.16.2 Linux   | a few seconds ago |
 | 1b185d512b | Kali-linux                 | Autorizado | 192.168.100.50 | 201.207.176.21/2841  | v1.16.2 Linux   | a few seconds ago |
 
 ## Funcionamiento de ZeroTier

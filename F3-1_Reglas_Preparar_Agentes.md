@@ -102,7 +102,7 @@ Debes ver algo así:
 WZ-APACHE 127.0.0.1 - - [31/Oct/2026:10:00:00 -0600] "GET / HTTP/1.1" 200 3380 "-" "curl/7.81.0"
 Si la línea empieza con WZ-APACHE, esta parte está lista.
 
-### 1.2 Preparar `agent-db` (Debian 12)
+### 1.2 Preparar `agent-db` (Debian 13)
 
 > Debes estar como **root**. Si entraste con un usuario normal, ejecuta primero:
 > ```bash
@@ -114,7 +114,7 @@ Si la línea empieza con WZ-APACHE, esta parte está lista.
 
 ## a) Instalar rsyslog (para tener `auth.log` y `kern.log`)
 
-**Qué hace:** Debian 12 guarda los logs solo en el journal del sistema. Wazuh necesita archivos de texto como `/var/log/auth.log` (SSH y sudo, reglas 1 y 3) y `/var/log/kern.log` (regla 4). `rsyslog` los crea.
+**Qué hace:** Debian 13 guarda los logs solo en el journal del sistema. Wazuh necesita archivos de texto como `/var/log/auth.log` (SSH y sudo, reglas 1 y 3) y `/var/log/kern.log` (regla 4). `rsyslog` los crea.
 
 **Paso 1. Instalar:**
 ```bash
@@ -177,7 +177,7 @@ Debe mostrar `WZ-PG %m [%p] %q%u@%d %h `.
 ```bash
 ls /var/log/postgresql/
 ```
-En Debian 12 suele ser `postgresql-15-main.log`. **Anota el nombre exacto.** Lo necesitas en el `agent.conf` del grupo `agent-db`, en la línea `<location>`.
+En Debian 13 suele ser `postgresql-15-main.log`. **Anota el nombre exacto.** Lo necesitas en el `agent.conf` del grupo `agent-db`, en la línea `<location>`.
 
 **Paso 4. Generar una línea de prueba:**
 ```bash
@@ -237,7 +237,7 @@ En `agent-db`:
 ```bash
 grep WAZUH_4444 /var/log/kern.log | tail
 ```
-Debe aparecer una línea con `WAZUH_4444_IN: ... SRC=192.168.100.99 ... DPT=4444`. Aunque la conexión sea rechazada, el intento queda registrado.
+Debe aparecer una línea con `WAZUH_4444_IN: ... SRC=192.168.100.50 ... DPT=4444`. Aunque la conexión sea rechazada, el intento queda registrado.
 
 ---
 ### 1.3 `agent-windows`
