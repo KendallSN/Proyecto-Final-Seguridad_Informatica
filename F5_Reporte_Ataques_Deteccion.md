@@ -6,7 +6,7 @@ El laboratorio detectó correctamente 3 de las 6 técnicas (50,0 %), y las tres 
 
 La fuerza bruta SSH quedó contenida de extremo a extremo: la regla `100001` generó la alerta y el Active Response bloqueó la IP atacante durante 10 minutos. La exfiltración por el puerto 4444 fue detectada por una regla específica de nivel 13. La inyección SQL fue detectada específicamente por `31103` ("SQL injection attempt"), una regla integrada de Wazuh; la regla propia del proyecto para esta técnica, `100021`, nunca llega a evaluarse, por una razón de decodificación documentada en la sección 2.3. Las dos brechas reales son la escalada de privilegios en Windows, bloqueada por el sistema operativo pero sin alerta porque falta la regla que procese el evento 7045, y la modificación de `sudoers` en `agent-db`, donde el módulo FIM no generó ningún evento en el historial consultado. En el segundo caso, el disco lleno del manager durante la ventana es la causa más probable de la falta de sincronización, documentado en la sección 4.
 
-## Resultados en una página
+## Resumen de resultados
 
 | # | Técnica | MITRE | Resultado del ataque | Detección |
 | --- | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ El escaneo se dirigió contra `agent-db` con `nmap -sV -O`. Se confirmaron dos p
 
 El ataque se dirigió contra `agent-db`, cuenta `testuser`, con `hydra -l testuser -P wordlists/small_list.txt -f -t 4`. La corrida encontró la credencial válida en 21 segundos.
 
-La regla `100001` (nivel 10, "SSH: fuerza bruta - más de 5 intentos fallidos en 60s") generó la alerta, y el Active Response `firewall-drop` insertó una regla `DROP` para la IP atacante en `agent-db`, verificada con `iptables -L INPUT`. El bloqueo duró 10 minutos exactos y expiró automáticamente. La Figura 1 muestra la regla `iptables` y el registro de `active-responses.log` que originó la acción.
+La regla `100001` (nivel 10, "SSH: fuerza bruta - más de 5 intentos fallidos en 60s") generó la alerta, y el Active Response `firewall-drop` insertó una regla `DROP` para la IP atacante en `agent-db`, verificada con `iptables -L INPUT`. El bloqueo duró 10 minutos y expiró automáticamente. La Figura 1 muestra la regla `iptables` y el registro de `active-responses.log` que originó la acción.
 
 ![Figura 1. Contención de la fuerza bruta SSH: regla `DROP` insertada por `firewall-drop` y registro de `active-response` asociado a la regla `100001`.](F5_Assets/figures/fig01_hydra_ar.png){width=90%}
 
