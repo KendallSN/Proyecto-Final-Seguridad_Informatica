@@ -4,9 +4,9 @@ Se ejecutaron contra el laboratorio real las seis técnicas de ataque requeridas
 
 El laboratorio detectó correctamente 3 de las 6 técnicas (50,0 %), y las tres mediante una regla diseñada específicamente para la técnica: fuerza bruta SSH (`100001`), inyección SQL (`31103`, regla integrada de Wazuh) y exfiltración (`100014`). Excluyendo el escaneo de puertos, para el que no se configuró ninguna regla, la tasa sube a 3 de 5 (60,0 %).
 
-La fuerza bruta SSH quedó contenida de extremo a extremo: la regla `100001` generó la alerta y el Active Response bloqueó la IP atacante durante 10 minutos exactos. La exfiltración por el puerto 4444 fue detectada por una regla específica de nivel 13. La inyección SQL fue detectada específicamente por `31103` ("SQL injection attempt"), una regla integrada de Wazuh; la regla propia del proyecto para esta técnica, `100021`, nunca llega a evaluarse, por una razón de decodificación documentada en la sección 2.3. Las dos brechas reales son la escalada de privilegios en Windows, bloqueada por el sistema operativo pero sin ninguna alerta en Wazuh, y la modificación de `sudoers` en `agent-db`, donde el módulo FIM no generó un solo evento en todo su historial. La causa más probable en ambos casos es el disco lleno del manager durante la ventana de pruebas, documentado en la sección 4.
+La fuerza bruta SSH quedó contenida de extremo a extremo: la regla `100001` generó la alerta y el Active Response bloqueó la IP atacante durante 10 minutos. La exfiltración por el puerto 4444 fue detectada por una regla específica de nivel 13. La inyección SQL fue detectada específicamente por `31103` ("SQL injection attempt"), una regla integrada de Wazuh; la regla propia del proyecto para esta técnica, `100021`, nunca llega a evaluarse, por una razón de decodificación documentada en la sección 2.3. Las dos brechas reales son la escalada de privilegios en Windows, bloqueada por el sistema operativo pero sin alerta porque falta la regla que procese el evento 7045, y la modificación de `sudoers` en `agent-db`, donde el módulo FIM no generó ningún evento en el historial consultado. En el segundo caso, el disco lleno del manager durante la ventana es la causa más probable de la falta de sincronización, documentado en la sección 4.
 
-## Resultados en una página
+## Resumen de resultados
 
 | # | Técnica | MITRE | Resultado del ataque | Detección |
 | --- | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ El escaneo se dirigió contra `agent-db` con `nmap -sV -O`. Se confirmaron dos p
 
 El ataque se dirigió contra `agent-db`, cuenta `testuser`, con `hydra -l testuser -P wordlists/small_list.txt -f -t 4`. La corrida encontró la credencial válida en 21 segundos.
 
-La regla `100001` (nivel 10, "SSH: fuerza bruta - más de 5 intentos fallidos en 60s") generó la alerta, y el Active Response `firewall-drop` insertó una regla `DROP` para la IP atacante en `agent-db`, verificada con `iptables -L INPUT`. El bloqueo duró 10 minutos exactos y expiró automáticamente. La Figura 1 muestra la regla `iptables` y el registro de `active-responses.log` que originó la acción.
+La regla `100001` (nivel 10, "SSH: fuerza bruta - más de 5 intentos fallidos en 60s") generó la alerta, y el Active Response `firewall-drop` insertó una regla `DROP` para la IP atacante en `agent-db`, verificada con `iptables -L INPUT`. El bloqueo duró 10 minutos y expiró automáticamente. La Figura 1 muestra la regla `iptables` y el registro de `active-responses.log` que originó la acción.
 
 ![Figura 1. Contención de la fuerza bruta SSH: regla `DROP` insertada por `firewall-drop` y registro de `active-response` asociado a la regla `100001`.](F5_Assets/figures/fig01_hydra_ar.png){width=90%}
 
@@ -75,17 +75,23 @@ full_log:    ...busqueda=(SELECT (CASE WHEN (5476=4144) THEN 'test'
 
 La regla propia del proyecto para esta técnica, `100021` ("Apache: posible inyección SQL"), nunca se activó, y la causa no es su patrón. Se verificó con `wazuh-logtest` sobre esta misma línea real que el decoder que procesa el log es el integrado `web-accesslog`, no el decoder personalizado `wz-apache-access` del que depende `100021` (a través de la regla base `100020`). Wazuh carga los decoders integrados antes que los locales, y el integrado también reconoce el formato de estas líneas, así que siempre gana: `100020` nunca recibe el evento decodificado como espera, y `100021` queda inalcanzable sin importar su patrón. No es un problema de mayúsculas y minúsculas: la propia regla `31103`, con un patrón igual de sensible a mayúsculas, detectó el payload `UNION SELECT` en mayúsculas del registro citado arriba. El hallazgo se deja documentado tal como está desplegado en el manager.
 
-![Figura 3. Alerta genérica `31152` (nivel 10) por error HTTP 500, registrada junto con la detección específica de la regla `31103`.](F5_Assets/figures/fig03_sqli_31152.png){width=85%}
+En paralelo, la regla integrada `31152` registró el error HTTP 500 de una petición de explotación manual. La Figura 2 conserva esa alerta como evidencia secundaria.
 
-**Evidencia:** `attacker/evidencia/03_sqlmap_20261031_2340.log`, `03b_sqli_manual_20261101_2313.log`; alerta `31103` verificada en `/var/ossec/logs/alerts/2026/Nov/ossec-alerts-01.json` del manager.
+![Figura 2. Alerta secundaria `31152` (nivel 10) por error HTTP 500 durante la explotación manual; la detección específica la produjo la regla `31103`.](F5_Assets/figures/fig03_sqli_31152.png){width=85%}
+
+**Evidencia:**
+
+- `attacker/evidencia/03_sqlmap_20261031_2340.log`
+- `attacker/evidencia/03b_sqli_manual_20261101_2313.log`
+- Alerta `31103` verificada en `/var/ossec/logs/alerts/2026/Nov/ossec-alerts-01.json` del manager.
 
 ## 2.4 Escalada local y persistencia en `sudoers` (T1548.003, `agent-db`)
 
 Un chequeo inicial (`sudo -l`, búsqueda de binarios SUID) sobre la cuenta `testuser` no arrojó hallazgos explotables. Para el ejercicio se configuró a propósito una regla de `sudoers` mal pensada (`NOPASSWD` sobre `/usr/bin/find`); la explotación con GTFOBins (`sudo find . -exec /bin/sh \; -quit`) produjo una shell interactiva de root [6]. La técnica correcta es T1548.003 (abuso de un mecanismo legítimo de control de privilegios), no T1068, que se reserva para la explotación de una vulnerabilidad de software o kernel real.
 
-Desde esa shell se agregó `testuser ALL=(ALL) NOPASSWD:ALL` a `/etc/sudoers`, como mecanismo de persistencia. El grupo `db` de Wazuh, al que pertenece `agent-db`, tiene FIM en tiempo real sobre `/etc/passwd`, `/etc/shadow`, `/etc/sudoers` y `/etc/sudoers.d` (regla `100002`, nivel 12), ya activo antes del ataque. No se produjo ninguna alerta: la revisión de `ossec-alerts-01.json` muestra cero eventos `syscheck` para `agent-db` en todo su historial. El mismo mecanismo sí funciona en `agent-linux` (Figura 4), lo que descarta una regla mal escrita y orienta la causa hacia el disco lleno del manager durante esa ventana (sección 4). El cambio se revirtió tras capturar la evidencia.
+Desde esa shell se agregó `testuser ALL=(ALL) NOPASSWD:ALL` a `/etc/sudoers`, como mecanismo de persistencia. El grupo `db` de Wazuh, al que pertenece `agent-db`, tiene FIM en tiempo real sobre `/etc/passwd`, `/etc/shadow`, `/etc/sudoers` y `/etc/sudoers.d` (regla `100002`, nivel 12), ya activo antes del ataque. No se produjo ninguna alerta: la revisión de `ossec-alerts-01.json` muestra cero eventos `syscheck` para `agent-db` en el historial consultado, incluida la ventana del ataque. El mismo mecanismo sí funciona en `agent-linux` (Figura 3), lo que descarta una regla mal escrita y orienta la revisión hacia el estado del módulo FIM en el agente y hacia el disco lleno del manager durante esa ventana (sección 4). El cambio se revirtió tras capturar la evidencia.
 
-![Figura 4. Eventos FIM de la regla `100002` (nivel 12) sobre `/etc/passwd` y `/etc/sudoers` en `agent-linux`; el mismo mecanismo no generó ningún evento para `agent-db`.](F5_Assets/figures/fig04_fim_100002.png){width=90%}
+![Figura 3. Eventos FIM de la regla `100002` (nivel 12) sobre `/etc/passwd` y `/etc/sudoers` en `agent-linux`; el mismo mecanismo no generó ningún evento para `agent-db`.](F5_Assets/figures/fig04_fim_100002.png){width=90%}
 
 **Evidencia:** `attacker/evidencia/04b_privesc_find_20261101_2354.log`.
 
@@ -105,11 +111,11 @@ Durante la prueba se encontró Windows Defender temporalmente deshabilitado, sin
 
 Se abrió un listener en Kali sobre el puerto 4444 y se envió `/etc/passwd` desde `agent-db`; el archivo llegó completo. La regla `100014` (nivel 13) disparó la alerta "Red: conexión SALIENTE al puerto 4444 hacia 192.168.100.50 (posible reverse shell)" dos veces a las 22:06:38, una por `journald` y otra por `/var/log/kern.log`, porque ambas fuentes capturaron el mismo evento.
 
-La regla de logging de `iptables` se corrigió de la cadena `INPUT` a `OUTPUT` durante la verificación, ya que la conexión relevante es saliente (Figura 6); la alerta `100014` corresponde a la regla ya corregida.
+![Figura 4. Alerta `100014` (nivel 13) por conexión saliente al puerto 4444 hacia la estación atacante.](F5_Assets/figures/fig02_exfil_100014.png){width=65%}
 
-![Figura 2. Alerta `100014` (nivel 13) por conexión saliente al puerto 4444 hacia la estación atacante.](F5_Assets/figures/fig02_exfil_100014.png){width=65%}
+La regla de logging de `iptables` se corrigió de la cadena `INPUT` a `OUTPUT` durante la verificación, ya que la conexión relevante es saliente (Figura 5); la alerta `100014` corresponde a la regla ya corregida.
 
-![Figura 6. Regla de logging corregida de la cadena `INPUT` a `OUTPUT` para capturar la conexión saliente al puerto 4444.](F5_Assets/figures/fig06_iptables_4444.png){width=85%}
+![Figura 5. Regla de logging inicial en la cadena `INPUT` (prefijo `WAZUH_4444_IN`), corregida a `OUTPUT` durante la verificación para capturar la conexión saliente al puerto 4444.](F5_Assets/figures/fig06_iptables_4444.png){width=85%}
 
 **Evidencia:** `attacker/evidencia/exfil_rec.txt`.
 
@@ -119,46 +125,44 @@ La regla de logging de `iptables` se corrigió de la cadena `INPUT` a `OUTPUT` d
 
 La tasa de detección se calcula como (alertas correctas / ataques ejecutados) × 100 %. Sobre los seis ataques requeridos, el laboratorio generó una alerta correcta y específica en 3 casos (fuerza bruta SSH, inyección SQL, exfiltración): **3/6 = 50,0 %**. El escaneo de puertos no tenía detección esperada; excluyéndolo, la tasa sobre los cinco ataques restantes es **3/5 = 60,0 %**.
 
-Las tres detecciones son específicas, pero no las tres son obra del ruleset propio del proyecto: la fuerza bruta SSH y la exfiltración se detectan con reglas escritas para este laboratorio (`100001`, `100014`); la inyección SQL se detecta con una regla integrada de Wazuh (`31103`) que ya cubría el caso, mientras que la regla propia (`100021`) nunca llega a evaluarse (sección 2.3). Vale la pena recordar esto para la defensa: el 50,0 % de detección no depende por completo del trabajo de regla propia del equipo. Por separado, el laboratorio previno 2 de 2 intentos de escalada de privilegios (Windows por el sistema operativo, Linux por reversión manual tras capturar evidencia), sin que ninguna de esas acciones sustituya a la detección en Wazuh.
+Las tres detecciones son específicas, pero no las tres son obra del ruleset propio del proyecto: la fuerza bruta SSH y la exfiltración se detectan con reglas escritas para este laboratorio (`100001`, `100014`); la inyección SQL se detecta con una regla integrada de Wazuh (`31103`) que ya cubría el caso, mientras que la regla propia (`100021`) nunca llega a evaluarse (sección 2.3). El 50,0 % de detección no depende por completo de las reglas propias. Por separado, el intento de escalada en Windows fue prevenido por el sistema operativo y el de Linux se completó y se revirtió manualmente tras capturar la evidencia; ninguna de las dos acciones sustituye la detección en Wazuh.
 
 ## 3.2 Falsos positivos y ruido
 
 No se registró ningún falso positivo propio durante las pruebas. Se corrigió un caso de diagnóstico erróneo: un bloqueo HTTP 405 se atribuyó inicialmente a una regla de WAF o `fail2ban`, pero la causa real fue un cambio de método HTTP en la aplicación durante la sesión.
 
-La máquina `misp-agent-linux` (192.168.100.11) genera intentos de fuerza bruta contra `root` de forma independiente a estas pruebas; al revisar el dashboard conviene filtrar por IP de origen para no confundirlos con el ejercicio. La integración MISP (regla `100050`) marcó la IP atacante como indicador de compromiso (Figura 7); es un evento de enriquecimiento, no una detección del ataque, y en este caso es circular porque la IP es la propia estación atacante del ejercicio.
+La máquina `misp-agent-linux` (192.168.100.11) genera intentos de fuerza bruta contra `root` de forma independiente a estas pruebas; su IP de origen permite separar esos intentos del ejercicio en el dashboard. La integración MISP (regla `100050`) marcó la IP atacante como indicador de compromiso (Figura 6); es un evento de enriquecimiento, no una detección del ataque, y en este caso es circular porque la IP es la propia estación atacante del ejercicio.
 
-![Figura 7. Alerta `100050` de enriquecimiento MISP sobre la IP atacante; no constituye una detección del ataque.](F5_Assets/figures/fig07_misp_100050.png){width=85%}
+![Figura 6. Alerta `100050` de enriquecimiento MISP sobre la IP atacante; no constituye una detección del ataque.](F5_Assets/figures/fig07_misp_100050.png){width=85%}
 
 # 4. Hallazgos de infraestructura
 
 Tres condiciones del manager afectaron la consistencia de los resultados durante la ventana de pruebas:
 
 1. El `wazuh-logcollector` dejó de leer el journal de systemd durante un tramo, deteniendo la generación de alertas; coincide con los periodos en que el Active Response de SSH no se disparó pese a cumplirse las condiciones de la regla.
-2. El disco del manager llegó al 100 %, principalmente por la caché de `/var/ossec/queue/vd_updater` (unos 27 GB acumulados). Es la causa más probable de la ausencia de eventos FIM en `agent-db`.
+2. El disco del manager llegó al 100 %, principalmente por la caché de `/var/ossec/queue/vd_updater` (unos 27 GB acumulados). Es la causa más probable de la falta de sincronización de FIM durante la ventana; el agente tampoco registra eventos previos, así que la revisión debe comenzar por el estado del módulo en `agent-db`.
 3. La regla de logging del puerto 4444 estaba inicialmente en la cadena `INPUT`; se corrigió a `OUTPUT` durante la verificación (sección 2.6).
 
-# 5. Conclusiones y recomendaciones
+# 5. Conclusiones
 
-El laboratorio detecta correctamente 3 de las 6 técnicas requeridas (50,0 %), las tres con una regla específica. Los controles reales funcionan: el Active Response de SSH contuvo el ataque de extremo a extremo, la regla de exfiltración identificó el reverse shell en el puerto 4444, y la inyección SQL fue clasificada correctamente como tal por una regla integrada de Wazuh. Las dos brechas, Windows sin alerta pese al bloqueo del sistema operativo y `agent-db` sin un solo evento FIM, comparten una causa probable común: el disco lleno del manager durante la ventana de pruebas.
-
-Una acción cierra la brecha de `sudoers`: liberar espacio en el disco del manager y resincronizar `agent-db` para confirmar que FIM reporta correctamente. La brecha de Windows no corresponde a ninguna de las cinco reglas personalizadas que pide el enunciado; como mejora opcional, podría agregarse una regla local que correlacione el evento 7045 con la instalación de servicios de kernel, para que el bloqueo de controladores también quede reflejado en una alerta. Una acción adicional, de menor prioridad porque la cobertura ya existe vía `31103`, es decidir si vale la pena reconectar la regla propia `100021` a la cadena de decoders que realmente procesa el log de Apache (enganchándola a la regla base integrada en vez de al decoder personalizado), o si se retira por redundante.
+El laboratorio detecta correctamente 3 de las 6 técnicas requeridas (50,0 %), las tres con una regla específica. Los controles reales funcionan: el Active Response de SSH contuvo el ataque de extremo a extremo, la regla de exfiltración identificó el reverse shell en el puerto 4444, y la inyección SQL fue clasificada correctamente como tal por una regla integrada de Wazuh. Las dos brechas tienen causas distintas: en Windows falta la regla que convierta el evento 7045 en alerta, pese a que el sistema operativo bloqueó el controlador; en `agent-db` el módulo FIM no registró eventos y el disco lleno del manager es la causa más probable de la falta de sincronización durante la ventana.
 
 ## Referencias
 
-[1] NIST, *Guide to Intrusion Detection and Prevention Systems (IDPS)*, NIST Special Publication 800-94. Gaithersburg, MD, USA: National Institute of Standards and Technology, Feb. 2007.
+[1] NIST, "Guide to Intrusion Detection and Prevention Systems (IDPS)," NIST Special Publication 800-94, Feb. 2007.
 
-[2] MITRE, *ATT&CK Enterprise Matrix*. [Online]. Available: [https://attack.mitre.org/](https://attack.mitre.org/). [Accessed: 04-Nov-2026].
+[2] MITRE, "ATT&CK Enterprise Matrix." [Online]. Available: [https://attack.mitre.org/](https://attack.mitre.org/). [Accessed: 04-Nov-2026].
 
-[3] Wazuh, *Wazuh Documentation 4.9*. [Online]. Available: [https://documentation.wazuh.com/](https://documentation.wazuh.com/). [Accessed: 04-Nov-2026].
+[3] Wazuh, "Wazuh Documentation 4.9." [Online]. Available: [https://documentation.wazuh.com/](https://documentation.wazuh.com/). [Accessed: 04-Nov-2026].
 
-[4] OWASP Foundation, *OWASP Top 10:2021*. [Online]. Available: [https://owasp.org/Top10/](https://owasp.org/Top10/). [Accessed: 04-Nov-2026].
+[4] OWASP Foundation, "OWASP Top 10:2021." [Online]. Available: [https://owasp.org/Top10/](https://owasp.org/Top10/). [Accessed: 04-Nov-2026].
 
-[5] NIST, *Computer Security Incident Handling Guide*, NIST Special Publication 800-61 Rev. 2. Gaithersburg, MD, USA: National Institute of Standards and Technology, Aug. 2012.
+[5] NIST, "Computer Security Incident Handling Guide," NIST Special Publication 800-61 Rev. 2, Aug. 2012.
 
-[6] GTFOBins, *GTFOBins: find*. [Online]. Available: [https://gtfobins.github.io/gtfobins/find/](https://gtfobins.github.io/gtfobins/find/). [Accessed: 04-Nov-2026].
+[6] GTFOBins, "GTFOBins: find." [Online]. Available: [https://gtfobins.github.io/gtfobins/find/](https://gtfobins.github.io/gtfobins/find/). [Accessed: 04-Nov-2026].
 
-[7] Red Canary, *Atomic Red Team*. [Online]. Available: [https://github.com/redcanaryco/atomic-red-team](https://github.com/redcanaryco/atomic-red-team). [Accessed: 04-Nov-2026].
+[7] Red Canary, "Atomic Red Team." [Online]. Available: [https://github.com/redcanaryco/atomic-red-team](https://github.com/redcanaryco/atomic-red-team). [Accessed: 04-Nov-2026].
 
-[8] Microsoft, *Microsoft Vulnerable Driver Blocklist*. [Online]. Available: [https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules). [Accessed: 04-Nov-2026].
+[8] Microsoft, "Microsoft Vulnerable Driver Blocklist." [Online]. Available: [https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/design/microsoft-recommended-driver-block-rules). [Accessed: 04-Nov-2026].
 
-[9] MITRE, *CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')*. [Online]. Available: [https://cwe.mitre.org/data/definitions/89.html](https://cwe.mitre.org/data/definitions/89.html). [Accessed: 04-Nov-2026].
+[9] MITRE, "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')." [Online]. Available: [https://cwe.mitre.org/data/definitions/89.html](https://cwe.mitre.org/data/definitions/89.html). [Accessed: 04-Nov-2026].
