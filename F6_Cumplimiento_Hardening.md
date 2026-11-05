@@ -4,7 +4,7 @@ Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardeni
 
 El entregable se organiza alrededor de cinco requisitos. La tabla siguiente resume dónde se cumple cada uno y con qué evidencia.
 
-| # | Requisito del enunciado | Dónde se cumple | Evidencia principal | Estado |
+| # | Requisito | Dónde se cumple | Evidencia principal | Estado |
 | --- | --- | --- | --- | --- |
 | 1 | Revisar el módulo de compliance (PCI DSS, GDPR, HIPAA, NIST 800-53) | Sección 3 | Columna `Compliance` de los CSV + vista SCA del dashboard | <span class="badge ok">Resuelto</span> |
 | 2 | Ejecutar SCA sobre todos los agentes | Sección 4 | 6 CSV: 3 antes + 3 después | <span class="badge ok">Resuelto</span> |
@@ -171,7 +171,7 @@ Para no dejar el requisito sin respuesta, se construyó una **matriz indicativa*
 | Art. 25: Protección por diseño y por defecto | Minimizar datos y aplicar controles técnicos desde el diseño | Hardening SSH, AppArmor, mínimo privilegio, bloqueo de cuentas | <span class="badge partial">Parcial</span> |
 | Art. 30: Registro de actividades de tratamiento | Mantener un registro de tratamientos | No cubierto por SCA; requiere documentación organizacional | <span class="badge pending">Pendiente</span> |
 | Art. 32: Seguridad del tratamiento | Confidencialidad, integridad, disponibilidad y resiliencia; pruebas periódicas | Control de acceso, AppArmor, políticas de contraseña, SCA periódico, FIM | <span class="badge partial">Parcial</span> |
-| Art. 33-34: Notificación de brechas | Detectar, evaluar y notificar brechas | Alertas Wazuh, Active Response, F5; tasa de detección 33–40% y brecha de FIM | <span class="badge partial">Parcial</span> |
+| Art. 33-34: Notificación de brechas | Detectar, evaluar y notificar brechas | Alertas Wazuh, Active Response y F5; detección efectiva 50.0% y específica 33.3%, con brecha de FIM | <span class="badge partial">Parcial</span> |
 | Art. 35: Evaluación de impacto | DPIA para tratamientos de alto riesgo | No cubierto; requiere proceso legal | <span class="badge pending">Pendiente</span> |
 
 **Conclusión de GDPR.** El laboratorio tiene controles técnicos que contribuyen a los artículos 25 y 32, y capacidades de detección que ayudan al 33-34.
@@ -627,7 +627,7 @@ La recomendación es no leer el 46.6% de `agent-db` como "mejor que `agent-linux
 
 ## 8.4 Matriz de priorización
 
-Incluye los hallazgos pendientes de la sección 5 (H-02, H-07, H-09, H-12) junto con el resto de los controles CIS que siguen fallando, priorizados por esfuerzo e impacto.
+Incluye los hallazgos pendientes de la sección 5 (H-02, H-07, H-09) junto con el resto de los controles CIS que siguen fallando, priorizados por esfuerzo e impacto.
 
 | Prioridad | Brecha | Agente | Esfuerzo | Impacto | Acción |
 | --- | --- | --- | --- | --- | --- |
