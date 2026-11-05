@@ -1,106 +1,36 @@
 <mxfile host="app.diagrams.net">
-  <diagram name="Topologia">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+  <diagram name="Topologia" id="0">
+    <mxGraphModel dx="1240" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="1080" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <mxCell id="lblFisica" value="Capa fisica: 6 redes aisladas, sin ruta directa" style="text;html=1;align=left;fontStyle=1;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="40" y="20" width="420" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="lblOverlay" value="Capa overlay" style="text;html=1;align=left;fontStyle=1;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry x="760" y="20" width="200" height="30" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 1: wazuh-server -->
-        <mxCell id="n1box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="60" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n1lbl" value="Portatil 1&#10;Red A" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="95" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n1" value="wazuh-server&#10;192.168.100.10&#10;Manager + Indexer + Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="80" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 2: agent-linux -->
-        <mxCell id="n2box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="190" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n2lbl" value="Portatil 2&#10;Red B" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="225" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n2" value="agent-linux&#10;192.168.100.20&#10;Apache + app web PHP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="210" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 3: agent-windows -->
-        <mxCell id="n3box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="320" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n3lbl" value="Portatil 3&#10;Red C" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="355" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n3" value="agent-windows&#10;192.168.100.30&#10;Active Directory + SMB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="340" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 4: agent-db -->
-        <mxCell id="n4box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="450" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n4lbl" value="Portatil 4&#10;Red D" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="485" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n4" value="agent-db&#10;192.168.100.40&#10;PostgreSQL + SSH&#10;(Debian 13)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="470" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 5: attacker -->
-        <mxCell id="n5box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="580" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n5lbl" value="Portatil 5&#10;Red E" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="615" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n5" value="attacker&#10;192.168.100.50 (asignada; .50 era la sugerida)&#10;Kali Linux - ataques controlados" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="600" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Portatil 6: misp (NUEVO) -->
-        <mxCell id="n6box" value="" style="rounded=0;dashed=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="710" width="500" height="110" as="geometry" />
-        </mxCell>
-        <mxCell id="n6lbl" value="Portatil 6&#10;Red F (nueva)" style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="50" y="745" width="100" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="n6" value="misp&#10;192.168.100.11&#10;Servidor MISP (Threat Intel)&#10;agente Wazuh: misp-agent-linux" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="160" y="730" width="340" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- Overlay cloud -->
-        <mxCell id="cloud" value="Red overlay ZeroTier&#10;&#10;192.168.100.0/24&#10;zt0 en cada VM&#10;&#10;ID de red&#10;76fc96e498e6c4d8&#10;&#10;Las 6 VM se ven entre si aqui" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="760" y="60" width="340" height="780" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#3700CC;" edge="1" parent="1" source="n1" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#3700CC;" edge="1" parent="1" source="n2" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#3700CC;" edge="1" parent="1" source="n3" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#3700CC;" edge="1" parent="1" source="n4" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#B85450;" edge="1" parent="1" source="n5" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#9673A6;" edge="1" parent="1" source="n6" target="cloud"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- DNS note -->
-        <mxCell id="dnsnote" value="Nota sobre DNS&#10;&#10;Si las VM necesitan mantener la resolucion por /etc/hosts (p. ej. wazuh-server),&#10;deberian fijar su DNS a mano: la red ZeroTier podria imponerles uno incorrecto." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="40" y="840" width="1060" height="90" as="geometry" />
-        </mxCell>
-
-        <!-- Puertos note -->
-        <mxCell id="portnote" value="Puertos y protocolo: ZeroTier necesita salida a internet por UDP 9993 (atraviesa NAT sin abrir nada en el router).&#10;Sobre la interfaz zt0 siguen aplicando los mismos puertos de siempre: 1514 y 1515 hacia wazuh-server (agentes), 443 hacia wazuh-server (dashboard),&#10;80 desde attacker hacia agent-linux (web/SQLi), 22 desde attacker hacia agent-db (SSH/fuerza bruta), 5432 desde agent-linux hacia agent-db,&#10;443 saliente desde wazuh-server hacia misp (integracion custom-misp.py)." style="text;html=1;align=left;fontSize=12;" vertex="1" parent="1">
-          <mxGeometry x="40" y="945" width="1060" height="80" as="geometry" />
-        </mxCell>
-
+        <mxCell id="lblFisica" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontStyle=1;fontSize=15;" value="Capa física: 5 laptops en redes aisladas, sin ruta directa" vertex="1"><mxGeometry x="40" y="18" width="560" height="30" as="geometry" /></mxCell>
+        <mxCell id="lblOverlay" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontStyle=1;fontSize=15;" value="Capa overlay" vertex="1"><mxGeometry x="840" y="18" width="200" height="30" as="geometry" /></mxCell>
+        <mxCell id="n1box" parent="1" style="rounded=0;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;strokeColor=#666666;strokeWidth=1.5;fillColor=#fafafa;" value="" vertex="1"><mxGeometry x="40" y="70" width="560" height="230" as="geometry" /></mxCell>
+        <mxCell id="n1lbl" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" value="&lt;b&gt;Laptop 1&lt;/b&gt;&lt;br&gt;Red A" vertex="1"><mxGeometry x="55" y="165" width="130" height="40" as="geometry" /></mxCell>
+        <mxCell id="wazuh" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#5B8C3E;strokeWidth=2;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;wazuh-server&lt;/b&gt;&lt;br&gt;192.168.100.10&lt;br&gt;Manager + Indexer + Dashboard" vertex="1"><mxGeometry x="200" y="95" width="380" height="70" as="geometry" /></mxCell>
+        <mxCell id="misp" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7B5A8E;strokeWidth=2;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;misp&lt;/b&gt;&lt;br&gt;192.168.100.11&lt;br&gt;Servidor MISP (Threat Intel)&lt;br&gt;agente Wazuh: misp-agent-linux" vertex="1"><mxGeometry x="200" y="185" width="380" height="86" as="geometry" /></mxCell>
+        <mxCell id="n2box" parent="1" style="rounded=0;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;strokeColor=#666666;strokeWidth=1.5;fillColor=#fafafa;" value="" vertex="1"><mxGeometry x="40" y="325" width="560" height="110" as="geometry" /></mxCell>
+        <mxCell id="n2lbl" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" value="&lt;b&gt;Laptop 2&lt;/b&gt;&lt;br&gt;Red B" vertex="1"><mxGeometry x="55" y="360" width="130" height="40" as="geometry" /></mxCell>
+        <mxCell id="lin" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#5B8C3E;strokeWidth=2;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;agent-linux&lt;/b&gt;&lt;br&gt;192.168.100.20&lt;br&gt;Apache + app web PHP" vertex="1"><mxGeometry x="200" y="345" width="380" height="70" as="geometry" /></mxCell>
+        <mxCell id="n3box" parent="1" style="rounded=0;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;strokeColor=#666666;strokeWidth=1.5;fillColor=#fafafa;" value="" vertex="1"><mxGeometry x="40" y="455" width="560" height="110" as="geometry" /></mxCell>
+        <mxCell id="n3lbl" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" value="&lt;b&gt;Laptop 3&lt;/b&gt;&lt;br&gt;Red C" vertex="1"><mxGeometry x="55" y="490" width="130" height="40" as="geometry" /></mxCell>
+        <mxCell id="win" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#5B8C3E;strokeWidth=2;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;agent-windows&lt;/b&gt;&lt;br&gt;192.168.100.30&lt;br&gt;Active Directory + SMB" vertex="1"><mxGeometry x="200" y="475" width="380" height="70" as="geometry" /></mxCell>
+        <mxCell id="n4box" parent="1" style="rounded=0;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;strokeColor=#666666;strokeWidth=1.5;fillColor=#fafafa;" value="" vertex="1"><mxGeometry x="40" y="585" width="560" height="120" as="geometry" /></mxCell>
+        <mxCell id="n4lbl" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" value="&lt;b&gt;Laptop 4&lt;/b&gt;&lt;br&gt;Red D" vertex="1"><mxGeometry x="55" y="625" width="130" height="40" as="geometry" /></mxCell>
+        <mxCell id="db" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#5B8C3E;strokeWidth=2;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;agent-db&lt;/b&gt;&lt;br&gt;192.168.100.40&lt;br&gt;PostgreSQL + SSH&lt;br&gt;(Debian 13)" vertex="1"><mxGeometry x="200" y="602" width="380" height="86" as="geometry" /></mxCell>
+        <mxCell id="n5box" parent="1" style="rounded=0;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;strokeColor=#666666;strokeWidth=1.5;fillColor=#fafafa;" value="" vertex="1"><mxGeometry x="40" y="725" width="560" height="110" as="geometry" /></mxCell>
+        <mxCell id="n5lbl" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" value="&lt;b&gt;Laptop 5&lt;/b&gt;&lt;br&gt;Red E" vertex="1"><mxGeometry x="55" y="760" width="130" height="40" as="geometry" /></mxCell>
+        <mxCell id="atk" parent="1" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#A8423E;strokeWidth=2.5;align=left;spacingLeft=12;fontSize=13;" value="&lt;b&gt;attacker&lt;/b&gt;&lt;br&gt;192.168.100.50&lt;br&gt;Kali Linux - ataques controlados" vertex="1"><mxGeometry x="200" y="745" width="380" height="70" as="geometry" /></mxCell>
+        <mxCell id="cloud" parent="1" style="rounded=1;arcSize=4;dashed=1;dashPattern=6 4;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7B5A8E;strokeWidth=2;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Red overlay ZeroTier&lt;/b&gt;&lt;br&gt;&lt;br&gt;192.168.100.0/24&lt;br&gt;zt&amp;lt;id&amp;gt; en cada VM&lt;br&gt;(p. ej. ztsjshaica en wazuh-server;&lt;br&gt;el nombre varía, confirmar con&lt;br&gt;zerotier-cli listnetworks)&lt;br&gt;&lt;br&gt;&lt;br&gt;Las 6 VM se ven entre sí aquí" vertex="1"><mxGeometry x="840" y="70" width="360" height="765" as="geometry" /></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="wazuh" target="cloud" style="edgeStyle=none;html=1;rounded=0;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#3949AB;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.0784;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="misp" target="cloud" style="edgeStyle=none;html=1;rounded=0;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#7B5A8E;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.2065;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="lin" target="cloud" style="edgeStyle=none;html=1;rounded=0;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#3949AB;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.4052;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="win" target="cloud" style="edgeStyle=none;html=1;rounded=0;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#3949AB;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5752;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="db" target="cloud" style="edgeStyle=none;html=1;rounded=0;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#3949AB;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7516;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="atk" target="cloud" style="edgeStyle=none;html=1;rounded=0;dashed=1;dashPattern=6 4;startArrow=oval;startFill=1;startSize=5;endArrow=oval;endFill=1;endSize=5;strokeColor=#A8423E;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.9281;entryDx=0;entryDy=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dnsnote" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#B07800;strokeWidth=1.5;align=left;spacingLeft=12;fontSize=12;" value="&lt;b&gt;Nota sobre DNS&lt;/b&gt;&lt;br&gt;&lt;br&gt;Si las VM necesitan mantener la resolución por /etc/hosts (p. ej. wazuh-server),&lt;br&gt;deberían fijar su DNS a mano: la red ZeroTier podría imponerles uno incorrecto." vertex="1"><mxGeometry x="40" y="865" width="1160" height="90" as="geometry" /></mxCell>
+        <mxCell id="portnote" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=12;" value="&lt;b&gt;Puertos y protocolo:&lt;/b&gt; ZeroTier necesita salida a internet por UDP 9993 (atraviesa NAT sin abrir nada en el router).&lt;br&gt;Sobre esa interfaz ZeroTier aplican los puertos de cada servicio: 1514 y 1515 hacia wazuh-server (agentes), 443 hacia wazuh-server (dashboard),&lt;br&gt;80 desde attacker hacia agent-linux (web/SQLi), 22 desde attacker hacia agent-db (SSH/fuerza bruta), 5432 desde agent-linux hacia agent-db,&lt;br&gt;443 saliente desde wazuh-server hacia misp." vertex="1"><mxGeometry x="40" y="975" width="1160" height="80" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>
