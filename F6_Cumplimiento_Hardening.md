@@ -770,7 +770,7 @@ Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Asset
 
 # Anexo C: Benchmarks y PDFs locales
 
-La carpeta `ProyectoUntracked/Benchmarks/` contiene PDFs de CIS usados como referencia local. No todos corresponden a la versión que Wazuh ejecutó. La clasificación es la siguiente.
+Durante la fase se consultaron PDFs de CIS como referencia local. No todos corresponden a la versión que Wazuh ejecutó. La clasificación es la siguiente.
 
 | Archivo | Qué es | ¿Se usa para mapear IDs? |
 | --- | --- | --- |
