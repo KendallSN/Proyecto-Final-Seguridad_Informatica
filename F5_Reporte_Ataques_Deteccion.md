@@ -75,7 +75,9 @@ full_log:    ...busqueda=(SELECT (CASE WHEN (5476=4144) THEN 'test'
 
 La regla propia del proyecto para esta técnica, `100021` ("Apache: posible inyección SQL"), nunca se activó, y la causa no es su patrón. Se verificó con `wazuh-logtest` sobre esta misma línea real que el decoder que procesa el log es el integrado `web-accesslog`, no el decoder personalizado `wz-apache-access` del que depende `100021` (a través de la regla base `100020`). Wazuh carga los decoders integrados antes que los locales, y el integrado también reconoce el formato de estas líneas, así que siempre gana: `100020` nunca recibe el evento decodificado como espera, y `100021` queda inalcanzable sin importar su patrón. No es un problema de mayúsculas y minúsculas: la propia regla `31103`, con un patrón igual de sensible a mayúsculas, detectó el payload `UNION SELECT` en mayúsculas del registro citado arriba. El hallazgo se deja documentado tal como está desplegado en el manager.
 
-![Figura 3. Alerta genérica `31152` (nivel 10) por error HTTP 500, registrada junto con la detección específica de la regla `31103`.](F5_Assets/figures/fig03_sqli_31152.png){width=85%}
+En paralelo, la regla integrada `31152` registró el error HTTP 500 de una petición de explotación manual. La Figura 2 conserva esa alerta como evidencia secundaria.
+
+![Figura 2. Alerta secundaria `31152` (nivel 10) por error HTTP 500 durante la explotación manual; la detección específica la produjo la regla `31103`.](F5_Assets/figures/fig03_sqli_31152.png){width=85%}
 
 **Evidencia:** `attacker/evidencia/03_sqlmap_20261031_2340.log`, `03b_sqli_manual_20261101_2313.log`; alerta `31103` verificada en `/var/ossec/logs/alerts/2026/Nov/ossec-alerts-01.json` del manager.
 
@@ -83,9 +85,9 @@ La regla propia del proyecto para esta técnica, `100021` ("Apache: posible inye
 
 Un chequeo inicial (`sudo -l`, búsqueda de binarios SUID) sobre la cuenta `testuser` no arrojó hallazgos explotables. Para el ejercicio se configuró a propósito una regla de `sudoers` mal pensada (`NOPASSWD` sobre `/usr/bin/find`); la explotación con GTFOBins (`sudo find . -exec /bin/sh \; -quit`) produjo una shell interactiva de root [6]. La técnica correcta es T1548.003 (abuso de un mecanismo legítimo de control de privilegios), no T1068, que se reserva para la explotación de una vulnerabilidad de software o kernel real.
 
-Desde esa shell se agregó `testuser ALL=(ALL) NOPASSWD:ALL` a `/etc/sudoers`, como mecanismo de persistencia. El grupo `db` de Wazuh, al que pertenece `agent-db`, tiene FIM en tiempo real sobre `/etc/passwd`, `/etc/shadow`, `/etc/sudoers` y `/etc/sudoers.d` (regla `100002`, nivel 12), ya activo antes del ataque. No se produjo ninguna alerta: la revisión de `ossec-alerts-01.json` muestra cero eventos `syscheck` para `agent-db` en el historial consultado, incluida la ventana del ataque. El mismo mecanismo sí funciona en `agent-linux` (Figura 4), lo que descarta una regla mal escrita y orienta la revisión hacia el estado del módulo FIM en el agente y hacia el disco lleno del manager durante esa ventana (sección 4). El cambio se revirtió tras capturar la evidencia.
+Desde esa shell se agregó `testuser ALL=(ALL) NOPASSWD:ALL` a `/etc/sudoers`, como mecanismo de persistencia. El grupo `db` de Wazuh, al que pertenece `agent-db`, tiene FIM en tiempo real sobre `/etc/passwd`, `/etc/shadow`, `/etc/sudoers` y `/etc/sudoers.d` (regla `100002`, nivel 12), ya activo antes del ataque. No se produjo ninguna alerta: la revisión de `ossec-alerts-01.json` muestra cero eventos `syscheck` para `agent-db` en el historial consultado, incluida la ventana del ataque. El mismo mecanismo sí funciona en `agent-linux` (Figura 3), lo que descarta una regla mal escrita y orienta la revisión hacia el estado del módulo FIM en el agente y hacia el disco lleno del manager durante esa ventana (sección 4). El cambio se revirtió tras capturar la evidencia.
 
-![Figura 4. Eventos FIM de la regla `100002` (nivel 12) sobre `/etc/passwd` y `/etc/sudoers` en `agent-linux`; el mismo mecanismo no generó ningún evento para `agent-db`.](F5_Assets/figures/fig04_fim_100002.png){width=90%}
+![Figura 3. Eventos FIM de la regla `100002` (nivel 12) sobre `/etc/passwd` y `/etc/sudoers` en `agent-linux`; el mismo mecanismo no generó ningún evento para `agent-db`.](F5_Assets/figures/fig04_fim_100002.png){width=90%}
 
 **Evidencia:** `attacker/evidencia/04b_privesc_find_20261101_2354.log`.
 
@@ -105,11 +107,11 @@ Durante la prueba se encontró Windows Defender temporalmente deshabilitado, sin
 
 Se abrió un listener en Kali sobre el puerto 4444 y se envió `/etc/passwd` desde `agent-db`; el archivo llegó completo. La regla `100014` (nivel 13) disparó la alerta "Red: conexión SALIENTE al puerto 4444 hacia 192.168.100.50 (posible reverse shell)" dos veces a las 22:06:38, una por `journald` y otra por `/var/log/kern.log`, porque ambas fuentes capturaron el mismo evento.
 
-La regla de logging de `iptables` se corrigió de la cadena `INPUT` a `OUTPUT` durante la verificación, ya que la conexión relevante es saliente (Figura 6); la alerta `100014` corresponde a la regla ya corregida.
+![Figura 4. Alerta `100014` (nivel 13) por conexión saliente al puerto 4444 hacia la estación atacante.](F5_Assets/figures/fig02_exfil_100014.png){width=65%}
 
-![Figura 2. Alerta `100014` (nivel 13) por conexión saliente al puerto 4444 hacia la estación atacante.](F5_Assets/figures/fig02_exfil_100014.png){width=65%}
+La regla de logging de `iptables` se corrigió de la cadena `INPUT` a `OUTPUT` durante la verificación, ya que la conexión relevante es saliente (Figura 5); la alerta `100014` corresponde a la regla ya corregida.
 
-![Figura 6. Regla de logging corregida de la cadena `INPUT` a `OUTPUT` para capturar la conexión saliente al puerto 4444.](F5_Assets/figures/fig06_iptables_4444.png){width=85%}
+![Figura 5. Regla de logging inicial en la cadena `INPUT` (prefijo `WAZUH_4444_IN`), corregida a `OUTPUT` durante la verificación para capturar la conexión saliente al puerto 4444.](F5_Assets/figures/fig06_iptables_4444.png){width=85%}
 
 **Evidencia:** `attacker/evidencia/exfil_rec.txt`.
 
@@ -125,9 +127,9 @@ Las tres detecciones son específicas, pero no las tres son obra del ruleset pro
 
 No se registró ningún falso positivo propio durante las pruebas. Se corrigió un caso de diagnóstico erróneo: un bloqueo HTTP 405 se atribuyó inicialmente a una regla de WAF o `fail2ban`, pero la causa real fue un cambio de método HTTP en la aplicación durante la sesión.
 
-La máquina `misp-agent-linux` (192.168.100.11) genera intentos de fuerza bruta contra `root` de forma independiente a estas pruebas; su IP de origen permite separar esos intentos del ejercicio en el dashboard. La integración MISP (regla `100050`) marcó la IP atacante como indicador de compromiso (Figura 7); es un evento de enriquecimiento, no una detección del ataque, y en este caso es circular porque la IP es la propia estación atacante del ejercicio.
+La máquina `misp-agent-linux` (192.168.100.11) genera intentos de fuerza bruta contra `root` de forma independiente a estas pruebas; su IP de origen permite separar esos intentos del ejercicio en el dashboard. La integración MISP (regla `100050`) marcó la IP atacante como indicador de compromiso (Figura 6); es un evento de enriquecimiento, no una detección del ataque, y en este caso es circular porque la IP es la propia estación atacante del ejercicio.
 
-![Figura 7. Alerta `100050` de enriquecimiento MISP sobre la IP atacante; no constituye una detección del ataque.](F5_Assets/figures/fig07_misp_100050.png){width=85%}
+![Figura 6. Alerta `100050` de enriquecimiento MISP sobre la IP atacante; no constituye una detección del ataque.](F5_Assets/figures/fig07_misp_100050.png){width=85%}
 
 # 4. Hallazgos de infraestructura
 
