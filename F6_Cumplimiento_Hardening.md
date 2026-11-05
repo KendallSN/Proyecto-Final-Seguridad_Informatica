@@ -679,10 +679,6 @@ Los cinco requisitos están cumplidos, con la evidencia y la sección que sostie
 
 Estas conclusiones describen la configuración medida en tres agentes en dos fechas. La línea base, los cambios verificados y la mejora cuantificada son el aporte del informe; la certificación formal y la auditoría de cumplimiento quedan fuera del alcance de la fase. La lista de controles pendientes completa el cuadro y marca el trabajo que sigue.
 
-## 9.4 Recomendación final
-
-Antes de la defensa oral, conviene tener a mano tres cosas: la tabla de 23 controles ganados, la explicación de por qué Windows subió poco (sección 18) y la aclaración de que el dashboard no exporta PDF de SCA. Las tres son las preguntas más probables y las tres tienen respuesta con evidencia.
-
 # 10. Referencias
 
 1. Wazuh Inc. *Security Configuration Assessment*. Documentación de Wazuh 4.9. [https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/](https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/)
