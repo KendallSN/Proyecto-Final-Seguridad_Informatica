@@ -1,6 +1,6 @@
 # Resumen ejecutivo
 
-Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening, el 03/11/2026.
+Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 [4] sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening, el 03/11/2026.
 
 El entregable se organiza alrededor de cinco requisitos. La tabla siguiente resume dónde se cumple cada uno y con qué evidencia.
 
@@ -60,7 +60,7 @@ El alcance son los tres agentes del laboratorio que participan del escenario emp
 
 ## 1.3 Relación con F5 y orden de las mediciones
 
-La evidencia de ataques de F5 se capturó **antes** del hardening. Eso explica por qué los ataques funcionaron: el laboratorio estaba en su estado basal. El orden fue deliberado: primero se demostró el ataque y la detección, después se endureció el sistema y se midió el efecto. Si se repitiera la demo de fuerza bruta, los controles nuevos (`MaxAuthTries`, `PermitRootLogin`, límites de conexión) reducirían la velocidad y la superficie del ataque, aunque una contraseña débil seguiría siendo explotable. Esa diferencia entre hardening y gestión de credenciales es parte de la lección de F6.
+La evidencia de ataques de F5 [14] se capturó **antes** del hardening. Eso explica por qué los ataques funcionaron: el laboratorio estaba en su estado basal. El orden fue deliberado: primero se demostró el ataque y la detección, después se endureció el sistema y se midió el efecto. Si se repitiera la demo de fuerza bruta, los controles nuevos (`MaxAuthTries`, `PermitRootLogin`, límites de conexión) reducirían la velocidad y la superficie del ataque, aunque una contraseña débil seguiría siendo explotable. Esa diferencia entre hardening y gestión de credenciales es parte de la lección de F6.
 
 ## 1.4 Fuentes de evidencia
 
@@ -100,7 +100,7 @@ La versión del benchmark importa porque los IDs CIS cambian entre versiones; el
 | `agent-db` | `cis_debian11` | CIS Debian Linux 11 Benchmark | v1.0.0 (2022-09-22) | Debian 13 (trixie) | Política Debian 11 adaptada a Debian 13: se cambió el requirements de 11. a 13. Resultados indicativos, no certificación Debian 13. |
 | `agent-windows` | `cis_win2022` | CIS Microsoft Windows Server 2022 Benchmark | v2.0.0 (2023-04-14) | Windows Server 2022 | Benchmark estándar. No es STIG ni Stand-alone. |
 
-**Mapeo de IDs.** Wazuh distribuye la política `cis_ubuntu22-04.yml` basada en CIS Ubuntu Linux 22.04 LTS Benchmark v1.0.0 (2022-08-30) [5], `cis_debian11.yml` basada en CIS Debian Linux 11 Benchmark v1.0.0 (2022-09-22) [6] y `cis_win2022.yml` basada en CIS Microsoft Windows Server 2022 Benchmark v2.0.0 (2023-04-14) [7]. Para mapear los IDs del CSV, el YAML es la fuente correcta.
+**Mapeo de IDs.** Wazuh distribuye la política `cis_ubuntu22-04.yml` basada en CIS Ubuntu Linux 22.04 LTS Benchmark v1.0.0 (2022-08-30) [5], `cis_debian11.yml` basada en CIS Debian Linux 11 Benchmark v1.0.0 (2022-09-22) [6] y `cis_win2022.yml` basada en CIS Microsoft Windows Server 2022 Benchmark v2.0.0 (2023-04-14) [7], incluidas en el ruleset de Wazuh [3]. Para mapear los IDs del CSV, el YAML es la fuente correcta.
 
 ## 2.3 Módulo de compliance: SCA y Regulatory Compliance
 
@@ -150,13 +150,13 @@ La tabla siguiente cuenta cuántos checks de cada agente llevan al menos una ref
 | CMMC v2.0 | 167 | 166 | 206 |
 | CIS CSC v8 | 171 | 168 | 247 |
 
-Los frameworks con más cobertura son CIS CSC v8, ISO 27001 y PCI DSS. Los de menor cobertura son HIPAA y NIST 800-53, porque sus controles se concentran en un subconjunto de checks. La cobertura mide representación: un framework puede tener pocos checks y aun así estar bien cubierto en los controles críticos.
+Los frameworks con más cobertura son CIS CSC v8 [13], ISO 27001 y PCI DSS. Los de menor cobertura son HIPAA y NIST 800-53, porque sus controles se concentran en un subconjunto de checks. La cobertura mide representación: un framework puede tener pocos checks y aun así estar bien cubierto en los controles críticos.
 
 ## 3.3 Lectura por framework
 
-- **PCI DSS** (v4.0 y v3.2.1; en `agent-db` sin la letra `v` en la clave, unificada en el análisis) cubre acceso, autenticación, registro, segmentación y protección de datos. Los controles de SSH y de contraseñas endurecidos impactan directo en acceso (7.x) y autenticación (8.x); las particiones y la retención de logs, pendientes, son su deuda principal.
-- **HIPAA** concentra sus checks en control de acceso, auditoría y protección de la información. La cobertura es más alta en `agent-windows` porque sus políticas de contraseña, bloqueo e inactividad tienen mapeo directo; en los Linux la deuda está en auditoría (`auditd`) y separación de logs.
-- **NIST SP 800-53** tiene cobertura media-baja (131/131/152 checks), por debajo de PCI DSS, ISO 27001 y CIS CSC. Los controles `AC-*` y `AU-*` son los que más se movieron con el hardening; la política CIS cubre configuración, no los procesos organizacionales que NIST también exige.
+- **PCI DSS** [8] (v4.0 y v3.2.1; en `agent-db` sin la letra `v` en la clave, unificada en el análisis) cubre acceso, autenticación, registro, segmentación y protección de datos. Los controles de SSH y de contraseñas endurecidos impactan directo en acceso (7.x) y autenticación (8.x); las particiones y la retención de logs, pendientes, son su deuda principal.
+- **HIPAA** [9] concentra sus checks en control de acceso, auditoría y protección de la información. La cobertura es más alta en `agent-windows` porque sus políticas de contraseña, bloqueo e inactividad tienen mapeo directo; en los Linux la deuda está en auditoría (`auditd`) y separación de logs.
+- **NIST SP 800-53** [10] tiene cobertura media-baja (131/131/152 checks), por debajo de PCI DSS, ISO 27001 y CIS CSC. Los controles `AC-*` y `AU-*` son los que más se movieron con el hardening; la política CIS cubre configuración, no los procesos organizacionales que NIST también exige.
 
 La evolución antes/después de los ocho frameworks está en la sección 7.4.
 
@@ -164,7 +164,7 @@ La evolución antes/después de los ocho frameworks está en la sección 7.4.
 
 **Los seis CSV no tienen la clave `gdpr`.** No es un error de parsing: las políticas SCA usadas no mapean GDPR. Wazuh sí soporta GDPR, pero en la capa de Regulatory Compliance, a través de reglas del manager etiquetadas con `gdpr_*`, no dentro de estos checks de SCA. Por eso no se puede reportar un "% GDPR" a partir de los CSV.
 
-Para no dejar el requisito sin respuesta, se construyó una **matriz indicativa** que cruza artículos del GDPR con controles aplicados y capacidades de Wazuh.
+Para no dejar el requisito sin respuesta, se construyó una **matriz indicativa** que cruza artículos del GDPR [11] con controles aplicados y capacidades de Wazuh.
 
 | Artículo GDPR | Qué exige | Evidencia en el laboratorio | Estado |
 | --- | --- | --- | --- |
@@ -424,6 +424,8 @@ Los hallazgos pendientes (H-02, H-07, H-09) están priorizados junto con el rest
 
 ## 5.3 Trazabilidad con los ataques de F5
 
+La tabla cruza cada hallazgo con la técnica de ATT&CK correspondiente [12].
+
 | Hallazgo | Ataque o técnica de F5 | Relación |
 | --- | --- | --- |
 | H-02, H-03, H-04, H-05 | T1110.001: fuerza bruta SSH (`hydra`) | Los controles cerrados son exactamente los que limitan intentos y acceso remoto |
@@ -681,27 +683,41 @@ Estas conclusiones describen la configuración medida en tres agentes en dos fec
 
 # 10. Referencias
 
-1. Wazuh Inc. *Security Configuration Assessment*. Documentación de Wazuh 4.9. [https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/](https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/)
-2. Wazuh Inc. *Regulatory Compliance*. Documentación de Wazuh 4.9. [https://documentation.wazuh.com/4.9/user-manual/capabilities/regulatory-compliance/](https://documentation.wazuh.com/4.9/user-manual/capabilities/regulatory-compliance/)
-3. Wazuh Inc. *SCA policies*. Repositorio de reglas de Wazuh. [https://github.com/wazuh/wazuh-ruleset](https://github.com/wazuh/wazuh-ruleset)
-4. Wazuh Inc. *Wazuh 4.9.2 release notes*. [https://documentation.wazuh.com/4.9/release-notes/release-4-9-2.html](https://documentation.wazuh.com/4.9/release-notes/release-4-9-2.html)
-5. CIS. *CIS Ubuntu Linux 22.04 LTS Benchmark v1.0.0* (2022-08-30). Base de `cis_ubuntu22-04.yml`.
-6. CIS. *CIS Debian Linux 11 Benchmark v1.0.0* (2022-09-22). Base de `cis_debian11.yml`.
-7. CIS. *CIS Microsoft Windows Server 2022 Benchmark v2.0.0* (2023-04-14). Base de `cis_win2022.yml`.
-8. PCI Security Standards Council. *PCI DSS v4.0*. [https://www.pcisecuritystandards.org/](https://www.pcisecuritystandards.org/)
-9. U.S. Department of Health & Human Services. *HIPAA Security Rule*. [https://www.hhs.gov/hipaa/](https://www.hhs.gov/hipaa/)
-10. NIST. *SP 800-53 Rev. 5, Security and Privacy Controls*. [https://csrc.nist.gov/](https://csrc.nist.gov/)
-11. European Union. *General Data Protection Regulation (EU) 2016/679*. [https://eur-lex.europa.eu/eli/reg/2016/679/oj](https://eur-lex.europa.eu/eli/reg/2016/679/oj)
-12. MITRE. *ATT&CK: T1110.001, T1190, T1548.003, T1041, T1571*. [https://attack.mitre.org/](https://attack.mitre.org/)
-13. CIS. *CIS Critical Security Controls v8*. [https://www.cisecurity.org/controls/](https://www.cisecurity.org/controls/)
-14. Proyecto. *F5: simulación de ataques y tasa de detección*. `F5_Reporte_Ataques_Deteccion.md`.
-15. Proyecto. *F6: datos congelados del análisis SCA*. `F6_Assets/ANALISIS_DATOS.md`.
+[1] Wazuh Inc., "Security Configuration Assessment," *Wazuh Documentation 4.9*. [Online]. Available: [https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/](https://documentation.wazuh.com/4.9/user-manual/capabilities/sec-config-assessment/). [Accessed: 04-Nov-2026].
+
+[2] Wazuh Inc., "Regulatory Compliance," *Wazuh Documentation 4.9*. [Online]. Available: [https://documentation.wazuh.com/4.9/user-manual/capabilities/regulatory-compliance/](https://documentation.wazuh.com/4.9/user-manual/capabilities/regulatory-compliance/). [Accessed: 04-Nov-2026].
+
+[3] Wazuh Inc., "SCA policies," *wazuh-ruleset*. [Online]. Available: [https://github.com/wazuh/wazuh-ruleset](https://github.com/wazuh/wazuh-ruleset). [Accessed: 04-Nov-2026].
+
+[4] Wazuh Inc., "Wazuh 4.9.2 release notes," *Wazuh Documentation*. [Online]. Available: [https://documentation.wazuh.com/4.9/release-notes/release-4-9-2.html](https://documentation.wazuh.com/4.9/release-notes/release-4-9-2.html). [Accessed: 04-Nov-2026].
+
+[5] CIS, "CIS Ubuntu Linux 22.04 LTS Benchmark," Version 1.0.0, Aug. 30, 2022.
+
+[6] CIS, "CIS Debian Linux 11 Benchmark," Version 1.0.0, Sep. 22, 2022.
+
+[7] CIS, "CIS Microsoft Windows Server 2022 Benchmark," Version 2.0.0, Apr. 14, 2023.
+
+[8] PCI Security Standards Council, "PCI DSS v4.0," PCI SSC, 2022. [Online]. Available: [https://www.pcisecuritystandards.org/](https://www.pcisecuritystandards.org/). [Accessed: 04-Nov-2026].
+
+[9] U.S. Department of Health & Human Services, "HIPAA Security Rule," HHS. [Online]. Available: [https://www.hhs.gov/hipaa/](https://www.hhs.gov/hipaa/). [Accessed: 04-Nov-2026].
+
+[10] NIST, "Security and Privacy Controls for Information Systems and Organizations," Special Publication 800-53 Rev. 5, Sep. 2020. [Online]. Available: [https://csrc.nist.gov/](https://csrc.nist.gov/). [Accessed: 04-Nov-2026].
+
+[11] European Parliament and Council, "Regulation (EU) 2016/679 (General Data Protection Regulation)," *Official Journal of the European Union*, 2016. [Online]. Available: [https://eur-lex.europa.eu/eli/reg/2016/679/oj](https://eur-lex.europa.eu/eli/reg/2016/679/oj). [Accessed: 04-Nov-2026].
+
+[12] MITRE, "ATT&CK Enterprise Matrix." [Online]. Available: [https://attack.mitre.org/](https://attack.mitre.org/). [Accessed: 04-Nov-2026].
+
+[13] Center for Internet Security, "CIS Critical Security Controls v8," CIS, 2021. [Online]. Available: [https://www.cisecurity.org/controls/](https://www.cisecurity.org/controls/). [Accessed: 04-Nov-2026].
+
+[14] Proyecto, "F5: simulación de ataques y tasa de detección," Informe técnico, Fase 5, 2026. `F5_Informe_Ataques_Deteccion.md`.
+
+[15] Proyecto, "F6: datos congelados del análisis SCA," Documento de trabajo, 2026. `F6_Assets/ANALISIS_DATOS.md`.
 
 **Nota sobre los PDF de CIS.** Los benchmarks de CIS están protegidos por sus términos de uso. Los PDF locales usados como referencia no se publican en el repositorio público; se clasifican en el anexo C y se entregan por un canal privado si el docente los solicita.
 
 # Anexo A: Inventario de evidencia
 
-Los seis CSV son la evidencia primaria. La tabla incluye filas, distribución aprobado/fallido/N/A y hash SHA-256 (primeros 16 caracteres, para identificar el archivo exacto sin reproducir el hash completo).
+Los seis CSV son la evidencia primaria; el análisis agregado está en `F6_Assets/ANALISIS_DATOS.md` [15]. La tabla incluye filas, distribución aprobado/fallido/N/A y hash SHA-256 (primeros 16 caracteres, para identificar el archivo exacto sin reproducir el hash completo).
 
 | Archivo | Agente | Fase | Filas | P/F/N/A | SHA-256 |
 | --- | --- | --- | ---: | ---: | --- |
