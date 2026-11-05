@@ -49,7 +49,7 @@
         </mxCell>
 
         <!-- Atacante -->
-        <mxCell id="attacker" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#A8423E;strokeWidth=2.5;fontSize=13;" value="&lt;b&gt;attacker .50&lt;/b&gt; (asignada; .99 sugerida en enunciado)&lt;br&gt;Kali Linux" vertex="1">
+        <mxCell id="attacker" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#A8423E;strokeWidth=2.5;fontSize=13;" value="&lt;b&gt;attacker .50&lt;/b&gt;&lt;br&gt;Kali Linux" vertex="1">
           <mxGeometry x="560" y="745" width="480" height="90" as="geometry" />
         </mxCell>
 
@@ -106,7 +106,7 @@
         <mxCell id="legL1" edge="1" parent="1" style="html=1;endArrow=block;endFill=1;strokeColor=#595959;strokeWidth=2;">
           <mxGeometry relative="1" as="geometry"><mxPoint x="760" y="896" as="sourcePoint" /><mxPoint x="800" y="896" as="targetPoint" /></mxGeometry>
         </mxCell>
-        <mxCell id="legT1" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;" value="Trafico legitimo" vertex="1">
+        <mxCell id="legT1" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;" value="Tráfico legítimo" vertex="1">
           <mxGeometry x="808" y="884" width="110" height="24" as="geometry" />
         </mxCell>
         <mxCell id="legL2" edge="1" parent="1" style="html=1;endArrow=block;endFill=1;startArrow=block;startFill=1;strokeColor=#7B5A8E;strokeWidth=2;">
