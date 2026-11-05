@@ -79,7 +79,11 @@ En paralelo, la regla integrada `31152` registró el error HTTP 500 de una petic
 
 ![Figura 2. Alerta secundaria `31152` (nivel 10) por error HTTP 500 durante la explotación manual; la detección específica la produjo la regla `31103`.](F5_Assets/figures/fig03_sqli_31152.png){width=85%}
 
-**Evidencia:** `attacker/evidencia/03_sqlmap_20261031_2340.log`, `03b_sqli_manual_20261101_2313.log`; alerta `31103` verificada en `/var/ossec/logs/alerts/2026/Nov/ossec-alerts-01.json` del manager.
+**Evidencia:**
+
+- `attacker/evidencia/03_sqlmap_20261031_2340.log`
+- `attacker/evidencia/03b_sqli_manual_20261101_2313.log`
+- Alerta `31103` verificada en `/var/ossec/logs/alerts/2026/Nov/ossec-alerts-01.json` del manager.
 
 ## 2.4 Escalada local y persistencia en `sudoers` (T1548.003, `agent-db`)
 
