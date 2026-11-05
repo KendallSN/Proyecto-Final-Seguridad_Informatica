@@ -139,11 +139,9 @@ Tres condiciones del manager afectaron la consistencia de los resultados durante
 2. El disco del manager llegó al 100 %, principalmente por la caché de `/var/ossec/queue/vd_updater` (unos 27 GB acumulados). Es la causa más probable de la falta de sincronización de FIM durante la ventana; el agente tampoco registra eventos previos, así que la revisión debe comenzar por el estado del módulo en `agent-db`.
 3. La regla de logging del puerto 4444 estaba inicialmente en la cadena `INPUT`; se corrigió a `OUTPUT` durante la verificación (sección 2.6).
 
-# 5. Conclusiones y recomendaciones
+# 5. Conclusiones
 
 El laboratorio detecta correctamente 3 de las 6 técnicas requeridas (50,0 %), las tres con una regla específica. Los controles reales funcionan: el Active Response de SSH contuvo el ataque de extremo a extremo, la regla de exfiltración identificó el reverse shell en el puerto 4444, y la inyección SQL fue clasificada correctamente como tal por una regla integrada de Wazuh. Las dos brechas tienen causas distintas: en Windows falta la regla que convierta el evento 7045 en alerta, pese a que el sistema operativo bloqueó el controlador; en `agent-db` el módulo FIM no registró eventos y el disco lleno del manager es la causa más probable de la falta de sincronización durante la ventana.
-
-Una acción cierra la brecha de `sudoers`: liberar espacio en el disco del manager y resincronizar `agent-db` para confirmar que FIM reporta correctamente. La brecha de Windows no corresponde a ninguna de las cinco reglas personalizadas que pide el enunciado; como mejora opcional, podría agregarse una regla local que correlacione el evento 7045 con la instalación de servicios de kernel, para que el bloqueo de controladores también quede reflejado en una alerta. Una acción adicional, de menor prioridad porque la cobertura ya existe vía `31103`, es decidir si vale la pena reconectar la regla propia `100021` a la cadena de decoders que realmente procesa el log de Apache (enganchándola a la regla base integrada en vez de al decoder personalizado), o si se retira por redundante.
 
 ## Referencias
 
