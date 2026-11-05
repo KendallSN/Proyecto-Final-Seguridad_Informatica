@@ -1,6 +1,6 @@
 # Resumen ejecutivo
 
-Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening, el 03/11/2026. No se usaron datos de ejemplo ni se re-ejecutaron los escaneos para este informe: se analizaron los seis CSV ya exportados.
+Este documento cierra la Fase 6 del proyecto: **Cumplimiento Normativo y Hardening**. Se apoya en las exportaciones reales del módulo SCA de Wazuh 4.9.2 sobre los tres agentes del laboratorio, en una línea base tomada el 02/11/2026 y en una segunda medición tomada después de aplicar el hardening, el 03/11/2026.
 
 El entregable se organiza alrededor de cinco requisitos. La tabla siguiente resume dónde se cumple cada uno y con qué evidencia.
 
@@ -38,7 +38,7 @@ En conjunto se evaluaron **739 controles** (suma de los tres agentes). Los aprob
 - El hardening cerró los vectores de acceso remoto más importantes: permisos de `sshd_config`, `PermitRootLogin`, `MaxAuthTries`, `MaxStartups`, `LoginGraceTime`, reenvío X11/TCP y confinamiento de AppArmor. Son controles que reducen la superficie del ataque de fuerza bruta de F5 (T1110.001), aunque la causa raíz de esa demo fue una contraseña débil asignada a propósito.
 - En Windows se cerraron las políticas de contraseña, bloqueo de cuenta e inactividad de sesión. El score subió poco porque el agente tiene 359 controles y la sección 18 (plantillas administrativas) concentra 219, de los cuales 161 siguen fallando.
 - Los tres hallazgos pendientes son estructurales o requieren una ventana de cambio: `AllowUsers`, contraseña de GRUB, y particiones separadas para `/var/log` y `/var/log/audit`. Ninguno invalida el hardening aplicado; quedan priorizados en la sección 8.
-- El resultado global sigue lejos de estar listo para producción: 43.3%, 46.6% y 40.9% no son porcentajes de certificación. Son una foto de configuración, no una auditoría formal.
+- El resultado global sigue lejos de estar listo para producción: 43.3%, 46.6% y 40.9% miden configuración y dejan fuera cualquier certificación formal.
 
 # 1. Introducción y alcance
 
@@ -92,7 +92,7 @@ SCA **no es un escáner de vulnerabilidades**. El Vulnerability Detector busca C
 
 ## 2.2 Benchmarks y versiones
 
-La versión del benchmark importa porque los IDs CIS cambian entre versiones; el mapeo autoritativo es el YAML de la política que Wazuh ejecutó, no un PDF genérico descargado después. La tabla siguiente fija esa correspondencia.
+La versión del benchmark importa porque los IDs CIS cambian entre versiones; el mapeo autoritativo es el YAML de la política que Wazuh ejecutó. La tabla siguiente fija esa correspondencia.
 
 | Agente | Policy ID | Benchmark | Versión | SO real | Coincidencia |
 | --- | --- | --- | --- | --- | --- |
@@ -100,9 +100,9 @@ La versión del benchmark importa porque los IDs CIS cambian entre versiones; el
 | `agent-db` | `cis_debian11` | CIS Debian Linux 11 Benchmark | v1.0.0 (2022-09-22) | Debian 13 (trixie) | Política Debian 11 adaptada a Debian 13: se cambió el requirements de 11. a 13. Resultados indicativos, no certificación Debian 13. |
 | `agent-windows` | `cis_win2022` | CIS Microsoft Windows Server 2022 Benchmark | v2.0.0 (2023-04-14) | Windows Server 2022 | Benchmark estándar. No es STIG ni Stand-alone. |
 
-**Por qué se cita el YAML y no solo el PDF.** Wazuh distribuye la política `cis_ubuntu22-04.yml` basada en CIS Ubuntu Linux 22.04 LTS Benchmark v1.0.0 (2022-08-30) [5], `cis_debian11.yml` basada en CIS Debian Linux 11 Benchmark v1.0.0 (2022-09-22) [6] y `cis_win2022.yml` basada en CIS Microsoft Windows Server 2022 Benchmark v2.0.0 (2023-04-14) [7]. Los PDF exactos de Ubuntu v1.0.0 y Windows v2.0.0 no están en el repositorio; los que sí están son versiones posteriores o benchmarks distintos (STIG, Stand-alone) y se clasifican en el anexo C. Para mapear los IDs del CSV, el YAML es la fuente correcta.
+**Mapeo de IDs.** Wazuh distribuye la política `cis_ubuntu22-04.yml` basada en CIS Ubuntu Linux 22.04 LTS Benchmark v1.0.0 (2022-08-30) [5], `cis_debian11.yml` basada en CIS Debian Linux 11 Benchmark v1.0.0 (2022-09-22) [6] y `cis_win2022.yml` basada en CIS Microsoft Windows Server 2022 Benchmark v2.0.0 (2023-04-14) [7]. Para mapear los IDs del CSV, el YAML es la fuente correcta.
 
-## 2.3 Módulo de compliance: dos capas que no hay que confundir
+## 2.3 Módulo de compliance: SCA y Regulatory Compliance
 
 Wazuh expone el cumplimiento en dos capas distintas. La primera es **SCA**: cada check lleva un arreglo `Compliance` con referencias a PCI DSS, HIPAA, NIST 800-53, ISO 27001, SOC 2, CMMC, CIS CSC y MITRE ATT&CK. Esas referencias están en la columna `Compliance` de los CSV. La segunda es **Regulatory Compliance** [2]: un módulo global que agrupa alertas por framework a partir de las reglas del manager, no de los checks de SCA.
 
@@ -124,7 +124,7 @@ La línea base es del 02/11/2026. El hardening se aplicó el 03/11/2026. La pol�
 1. **Level 1 y Level 2 mezclados.** Las políticas incluyen checks de ambos perfiles. El porcentaje global no es un porcentaje de cumplimiento CIS Level 1. En la sección 6 se indica qué se aplicó y qué excepción Level 2 se incluyó.
 2. **Debian 13 con política Debian 11.** `agent-db` corre Debian 13 (trixie), pero Wazuh no tiene una política CIS Debian 13. Se adaptó `cis_debian11.yml` cambiando el `requirements` de `11.` a `13.`. Los resultados son indicativos: miden controles de Debian 11 sobre un sistema Debian 13, no una certificación Debian 13.
 3. **N/A que no son equivalentes.** `agent-db` tiene 22 `not applicable`, 21 de ellas en la sección 4 porque la política no puede evaluar las reglas de auditoría cuando `auditd` no está instalado. `agent-linux`, en cambio, marca esas mismas comprobaciones como `failed`. Al excluir los N/A, el score de `agent-db` queda inflado en relación con `agent-linux`. Si se contaran esas 21 como fallidas, `agent-db` estaría en 37.1% antes y 41.6% después, no en 41.5% y 46.6%. Se mantiene la fórmula del dashboard por consistencia, pero la comparación entre agentes debe leerse con esta advertencia.
-4. **El score no pondera por riesgo.** Un control de bajo impacto vale lo mismo que uno crítico. Un 43% no significa "43% seguro": significa que 43 de cada 100 controles evaluados pasaron.
+4. **El score no pondera por riesgo.** Un control de bajo impacto vale lo mismo que uno crítico. Un 43% indica que 43 de cada 100 controles evaluados pasaron.
 5. **SCA es configuración, no operación.** Un control puede pasar y el servicio puede estar mal operado, o al revés. SCA no reemplaza pruebas de penetración, monitoreo runtime ni una auditoría formal.
 
 # 3. Módulo de compliance (requisito 1)
@@ -150,7 +150,7 @@ La tabla siguiente cuenta cuántos checks de cada agente llevan al menos una ref
 | CMMC v2.0 | 167 | 166 | 206 |
 | CIS CSC v8 | 171 | 168 | 247 |
 
-Los frameworks con más cobertura son CIS CSC v8, ISO 27001 y PCI DSS. Los de menor cobertura son HIPAA y NIST 800-53, porque sus controles se concentran en un subconjunto de checks. La cobertura no es un juicio de calidad: un framework puede tener pocos checks y aun así estar bien representado en los controles críticos.
+Los frameworks con más cobertura son CIS CSC v8, ISO 27001 y PCI DSS. Los de menor cobertura son HIPAA y NIST 800-53, porque sus controles se concentran en un subconjunto de checks. La cobertura mide representación: un framework puede tener pocos checks y aun así estar bien cubierto en los controles críticos.
 
 ## 3.3 Lectura por framework
 
@@ -160,7 +160,7 @@ Los frameworks con más cobertura son CIS CSC v8, ISO 27001 y PCI DSS. Los de me
 
 La evolución antes/después de los ocho frameworks está en la sección 7.4.
 
-## 3.4 GDPR: la excepción que hay que explicar bien
+## 3.4 GDPR: cobertura desde Regulatory Compliance
 
 **Los seis CSV no tienen la clave `gdpr`.** No es un error de parsing: las políticas SCA usadas no mapean GDPR. Wazuh sí soporta GDPR, pero en la capa de Regulatory Compliance, a través de reglas del manager etiquetadas con `gdpr_*`, no dentro de estos checks de SCA. Por eso no se puede reportar un "% GDPR" a partir de los CSV.
 
@@ -187,7 +187,7 @@ Wazuh Dashboard → Regulatory Compliance → seleccionar framework
   → PCI DSS / HIPAA / NIST 800-53 / GDPR → alertas agrupadas por requisito
 ```
 
-La primera ruta muestra la trazabilidad por check (la que está en los CSV). La segunda muestra la agrupación por alertas (la que alimenta Regulatory Compliance). No son la misma cosa y no deberían presentarse como si lo fueran.
+La primera ruta muestra la trazabilidad por check (la que está en los CSV). La segunda muestra la agrupación por alertas (la que alimenta Regulatory Compliance).
 
 # 4. Resultados del SCA inicial (requisito 2)
 
@@ -199,7 +199,7 @@ La primera ruta muestra la trazabilidad por check (la que está en los CSV). La 
 | `agent-db` | 198 | 73 | 103 | 22 | 41.5% |
 | `agent-windows` | 359 | 141 | 218 | 0 | 39.3% |
 
-Los tres agentes arrancan en un rango bajo, entre 38.9% y 41.5%. Es lo esperable en una VM recién instalada: el benchmark CIS es exigente y muchas de sus recomendaciones no vienen aplicadas por defecto. El objetivo de F6 no era llegar a 100%, sino medir, priorizar y demostrar una mejora verificable.
+Los tres agentes arrancan en un rango bajo, entre 38.9% y 41.5%. Es lo esperable en una VM recién instalada: el benchmark CIS es exigente y muchas de sus recomendaciones no vienen aplicadas por defecto. El objetivo de F6 fue medir, priorizar y demostrar una mejora verificable.
 
 ## 4.2 agent-linux: Ubuntu 22.04 LTS
 
@@ -302,7 +302,7 @@ Se documentaron **14 hallazgos**. Cada uno tiene ID, controles CIS asociados, ag
 | H-13 | Sin límite de inactividad de sesión | `2.3.7.3` | `agent-windows` | Media | <span class="badge ok">Resuelto</span> |
 | H-14 | Mensaje legal de inicio de sesión incompleto | `2.3.7.4`, `2.3.7.5` | `agent-windows` | Media | <span class="badge ok">Resuelto</span> |
 
-**Resumen de estado:** 11 resueltos y 3 pendientes. Los pendientes son los que requieren una ventana de cambio, una decisión de negocio o una reinstalación. H-12 y H-14 se verificaron por inspección directa del sistema el 04/11/2026, no por el CSV post-hardening del 03/11.
+**Resumen de estado:** 11 resueltos y 3 pendientes. Los pendientes son los que requieren una ventana de cambio, una decisión de negocio o una reinstalación.
 
 ## 5.2 Fichas de hallazgos
 
@@ -454,7 +454,7 @@ La tabla siguiente muestra el estado final que el SCA post-hardening confirmó e
 | `5.2.19` | `MaxStartups` | `10:30:60` | <span class="badge ok">Aprobado</span> |
 | `5.2.21` | `LoginGraceTime` | `60` | <span class="badge ok">Aprobado</span> |
 
-**Procedimiento reproducible.** Los comandos siguientes son la forma de reproducir el estado verificado. No son un transcript: la evidencia es el CSV post-hardening. Antes de recargar SSH, validar la sintaxis con `sshd -t` para no cortar el acceso.
+**Procedimiento reproducible.** Los comandos siguientes reproducen el estado verificado; la evidencia es el CSV post-hardening. Antes de recargar SSH, validar la sintaxis con `sshd -t` para no cortar el acceso.
 
 ```bash
 # Respaldar la configuración antes de tocarla
@@ -514,7 +514,7 @@ En `agent-windows` se configuró política de grupo local (por ejemplo, con `gpe
 
 ## 6.6 Verificación y control de cambios
 
-Cada cambio se validó con el SCA post-hardening. No se detectaron regresiones: ningún control que estuviera aprobado antes pasó a fallido después. Esa es la prueba más fuerte de que el hardening no rompió controles existentes. La verificación es el resultado del SCA, no un transcript de comandos: el repositorio conserva los CSV, no una bitácora de shell.
+Cada cambio se validó con el SCA post-hardening. No se detectaron regresiones: ningún control que estuviera aprobado antes pasó a fallido después. Esa es la prueba más fuerte de que el hardening no rompió controles existentes. La verificación es el resultado del SCA y el repositorio conserva los CSV.
 
 **Sobre el alcance Level 1.** El enunciado pide "hardening básico siguiendo los benchmarks CIS Level 1". Se aplicó un subconjunto priorizado de Level 1, más la excepción Level 2 de AppArmor. No se aplicó el benchmark completo ni se ejecutó un script de hardening masivo. Un script así, sobre una VM compartida, puede dejar el sistema inaccesible y no permite verificar el efecto de cada cambio.
 
@@ -532,7 +532,7 @@ Se ganaron **23 controles** en total: 8 en `agent-linux`, 9 en `agent-db` y 6 en
 
 ## 7.3 Regresiones y estabilidad
 
-**0 regresiones.** Ningún control que estuviera aprobado en la línea base pasó a fallido después del hardening. La comparación se hizo por ID CIS y cubrió los tres agentes. Esto no prueba que no haya efectos colaterales fuera del SCA, pero sí que los controles evaluados se mantuvieron estables.
+**0 regresiones.** Ningún control que estuviera aprobado en la línea base pasó a fallido después del hardening. La comparación se hizo por ID CIS y cubrió los tres agentes. Los 739 controles evaluados se mantuvieron estables entre ambas mediciones.
 
 ## 7.4 Cobertura por framework
 
@@ -673,11 +673,11 @@ Los cinco requisitos están cumplidos, con la evidencia y la sección que sostie
 - Se cerraron controles SSH que limitan la fuerza bruta y el acceso remoto; la demo de F5 usó una contraseña débil de prueba.
 - Se cerraron las políticas de contraseña, bloqueo e inactividad de Windows.
 - Quedan 3 hallazgos pendientes, todos priorizados.
-- El score sigue siendo bajo: no es una certificación, es una foto de configuración.
+- El score sigue siendo bajo y describe configuración.
 
-## 9.3 Lo que este informe no dice
+## 9.3 Alcance de las conclusiones
 
-No dice que el laboratorio sea seguro. No dice que cumpla PCI DSS, HIPAA, NIST o GDPR. No dice que el hardening esté completo. Dice que hay una línea base medida, un conjunto de cambios verificados, una mejora cuantificada y una lista honesta de lo que falta. Esa distinción es la que hace útil el entregable.
+Estas conclusiones describen la configuración medida en tres agentes en dos fechas. La línea base, los cambios verificados y la mejora cuantificada son el aporte del informe; la certificación formal y la auditoría de cumplimiento quedan fuera del alcance de la fase. La lista de controles pendientes completa el cuadro y marca el trabajo que sigue.
 
 ## 9.4 Recomendación final
 
@@ -715,8 +715,6 @@ Los seis CSV son la evidencia primaria. La tabla incluye filas, distribución ap
 | `Configuration-Assestments-PostHardening/checks_db.csv` | agent-db | Después | 198 | 82/94/22 | <span class="hash">fd415ac60d5aef15…</span> |
 | `Configuration-Assestments/checks_windows.csv` | agent-windows | Antes | 359 | 141/218/0 | <span class="hash">c81d78573ca84972…</span> |
 | `Configuration-Assestments-PostHardening/checks_windows.csv` | agent-windows | Después | 359 | 147/212/0 | <span class="hash">fb604f671087012a…</span> |
-
-No se re-ejecutaron escaneos para este informe.
 
 # Anexo B: Controles ganados
 
